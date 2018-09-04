@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>简单拖放</title>
+  <style>
+    .drop {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 200px;
+      height: 100px;
+      margin: 0 auto;
+      border: 1px solid #000;
+    }
+
+    #drag {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="drop">
+    <!-- 设置可拖放元素的 draggable 属性为 true -->
+    <p id="drag" draggable="true">我是拖放元素</p>
+  </div>
+  <div class="drop"></div>
+  <script>
+    var drag = document.getElementById('drag');
+    var drop = document.getElementsByClassName('drop')[1];
+
+    drop.ondragover = function (e) {
+      e.preventDefault();
+    }
+    drop.ondrop = function (e) {
+      e.target.appendChild(drag);
+    }
+  </script>
+</body>
+
+</html>

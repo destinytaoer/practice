@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>珠峰培训</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        #div1,#div2,#div3{
+            width: 200px;
+            height: 200px;
+            background: #3059fa;
+            border-radius: 50%;
+            cursor: move;
+            position: absolute;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="div1">珠峰培训</div>
+    <div id="div2">珠峰培训</div>
+    <div id="div3">珠峰培训</div>
+</body>
+</html>
+<script>
+    class Drag{
+        constructor(ele){
+            console.log(ele);// oDiv
+            this.cur = ele;//把这个元素放到这个实例的一个属性上，是为了下边函数能调用到这个元素
+            ele.onmousedown = this.dragStart.bind(this);//this是这个类的实例
+        }
+        dragStart(e) {
+            //把这个函数中的this都指向 这个类的实例
+            e = e || window.event;
+            e.preventDefault();
+            this.startX = this.cur.offsetLeft;
+            this.startY = this.cur.offsetTop;// 记录了盒子的初始位置
+
+            this.mx = e.pageX;
+            this.my = e.pageY;
+
+            document.onmousemove = this.dragMove.bind(this);//dragMove 中的this已经变成 这个类的实例
+            document.onmouseup = this.dragEnd.bind(this);
+        }
+        dragMove(e) {
+            e = e || window.event;
+            //根据鼠标的移动距离 和 盒子的初始位置  去设置盒子当前的位置
+            var l = e.pageX - this.mx + this.startX,//盒子当前 x 轴的位置
+                t = e.pageY - this.my + this.startY;//盒子当前 y 轴的位置
+            this.cur.style.left = l + 'px';
+            this.cur.style.top = t + 'px';
+        }
+        dragEnd() {
+            //移除绑定的事件
+            document.onmousemove = null;
+            document.onmouseup = null;
+        }
+    }
+    var oDiv = document.getElementById('div1');
+    var oDiv2 = document.getElementById('div2');
+    var oDiv3 = document.getElementById('div3');
+    var drag1 = new Drag(oDiv);// 通过new 传入的实参 我们可以在类的constructor中接收到
+    var drag2 = new Drag(oDiv2);
+    var drag3 = new Drag(oDiv3);
+</script>  

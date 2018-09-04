@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>过渡动画</title>
+  <style>
+    body {
+      background: #2192bc;
+    }
+    .box {
+      width: 100px;
+      height: 100px;
+      background: #2c9dc4;
+      border-radius: 50%;
+      margin: 100px auto;
+      transition: box-shadow 1s;
+      box-shadow: 0 0 0 30px transparent;
+    }
+    .box:hover {
+      box-shadow: 0 0 0 0 rgba(255,255,255,0.5);
+    }
+  </style>
+</head>
+<body>
+<div class="box"></div>
+</body>
+</html>

@@ -1,0 +1,71 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+ul {
+  list-style: none;
+}
+
+.container {
+  width: 1000px;
+  margin: 0 auto;
+}
+
+.btn-box {
+  font-size: 0;
+  margin: 20px 0;
+}
+.btn-box:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+.btn-box h2 {
+  float: left;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.btn-box ul {
+  float: left;
+  font-size: 0;
+}
+
+.btn-box ul li {
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  margin-left: 20px;
+}
+
+.content-box ul{
+  font-size: 0;
+}
+
+.content-box ul li {
+  display: inline-block;
+  font-size: 14px;
+  padding: 15px;
+  border: 1px solid #eee;
+}
+.content-box ul li + li {
+  margin-left: 20px;
+}
+.img {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto;
+}
+
+.img img {
+  width: 100%;
+}
+.title, .price, .commment, .time {
+  text-align: center;
+  margin-top: 10px;
+}
+.title span, .price span, .commment span, .time span {
+  text-align: center;
+}

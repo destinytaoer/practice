@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>图片预加载之无序加载</title>
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
+    a {
+      text-decoration: none;
+    }
+    .box {
+      text-align: center;
+      display: none;
+    }
+    .btn {
+      display: inline-block;
+      height: 30px;
+      width: 100px;
+      border: 1px solid #ccc;
+      line-height: 30px;
+      background: #fff;
+      padding: 0 10px;
+      margin-right: 10px;
+      color: #333;
+      font-size: 18px;
+
+    }
+    .btn:hover {
+      background: #000;
+      color: #fff;
+    }
+    .loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <img id="img" src="img/wallhaven1.jpg" alt="" width="1200" height="600">
+    <p>
+      <a href="javascript:;" class="btn" data-control="prev">上一页</a>
+      <a href="javascript:;" class="btn" data-control="next">下一页</a>
+    </p>
+  </div>
+  <div class="loading">
+    <p class="progress">0%</p>
+  </div>
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  <script src="preload.js"></script>
+  <script>
+    var imgs = [
+      'img/wallhaven1.jpg',
+      'img/wallhaven2.jpg',
+      'img/wallhaven3.jpg',
+      'img/wallhaven4.jpg',
+      'img/wallhaven5.jpg',
+      'img/wallhaven6.jpg'
+    ];
+    var index = 0,
+      total = imgs.length,
+      $progress = $('.progress');
+
+    $.preload(imgs, {
+      each: function (step) {
+        $progress.html(Math.round(step / total * 100) + '%');
+        console.log(1);
+      },
+      all: function () {
+        $('.loading').hide();
+        $('.box').show();
+        document.title = '1/' + total;
+      }
+    });
+
+    $('.btn').on('click', function() {
+      if ($(this).data('control') === 'prev') {
+        index =  Math.max(0, --index);
+      } else { // 下一张
+        index = Math.min(total - 1, ++index);
+      }
+      document.title = (index + 1) + '/' + total;
+      $('#img').attr('src', imgs[index]);
+    })
+  </script>
+</body>
+</html>

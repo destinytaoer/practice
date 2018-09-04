@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>JQ放大镜</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    .lit-box,
+    .big-box {
+      position: relative;
+      left: 0;
+      top: 0;
+      overflow: hidden;
+      width: 360px;
+      height: 240px;
+      border: 2px dashed rgb(241, 134, 34);
+    }
+
+    .lit-box img {
+      width: 100%;
+      height: 100%;
+    }
+
+    .lit-box .mask {
+      display: none;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 90px;
+      height: 60px;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .big-box {
+      display: none;
+    }
+
+    .big-box img {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1440px;
+      height: 960px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="lit-box">
+    <img src="https://wallpapers.wallhaven.cc/wallpapers/full/wallhaven-681052.jpg" alt="">
+    <div class="mask"></div>
+  </div>
+  <div class="big-box">
+    <img src="https://wallpapers.wallhaven.cc/wallpapers/full/wallhaven-681052.jpg" alt="">
+  </div>
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  <script>
+    let $litBox = $('.lit-box'),
+      $bigBox = $('.big-box'),
+      $mask = $litBox.children('.mask'),
+      $bigImg = $bigBox.children('img');
+
+    $litBox.on('mouseenter', function (e) {
+      e = e || window.event;
+
+      $bigBox.show();
+      $mask.show();
+      
+      this.precent = this.clientWidth / $mask.width();
+      this.maxL = this.clientWidth - $mask.width();
+      this.maxT = this.clientHeight - $mask.height();
+    })
+
+    $litBox.on('mousemove', function (e) {
+      e = e || window.e;
+
+      let obj = $(this).offset();
+      let l = e.pageX - obj.left - $mask.width()/2;
+      let t = e.pageY - obj.top - $mask.height()/2;
+      
+      l = l > this.maxL ? this.maxL : (l <= 0 ? 0 : l);
+      t = t > this.maxT ? this.maxT : (t <=0 ? 0 : t);
+      $mask.css({left: l, top: t});
+
+      $bigImg.css({
+          left: -l*this.percent,
+            top: -t*this.percent
+      });
+    })
+
+    $litBox.on('mouseleave', function (e) {
+      $bigBox.hide();
+      $mask.hide();
+    })
+
+    function move(e) {
+        var $this = $(this);
+        var obj = $this.offset();
+        var x = e.pageX - obj.left - $mask.width()/2,
+            y = e.pageY - obj.top - $mask.height()/2;
+            
+        x = x >= this.maxL ? this.maxL : (x <= 0 ? 0 : x);
+        y = y >= this.maxT ? this.maxT : (y <= 0 ? 0 : y);
+        $mask.css({left:x,top:y});
+        $bigImg.css({
+            left: -x*this.percent,
+            top: -y*this.percent
+        })
+    }
+  </script>
+</body>
+
+</html>

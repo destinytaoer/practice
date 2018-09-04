@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>document</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    #box {
+      width: 200px;
+      height: 200px;
+      background: red;
+      position: relative;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="box"></div>
+  <script src="utils.js"></script>
+  <script>
+    let box = document.getElementById('box');
+
+    document.onkeydown = function (e) {
+      switch (e.keyCode) {
+        case 37:
+          box.style.left = utils.css(box, 'left') - 10 + 'px';
+          break;
+        case 38:
+          box.style.top = utils.css(box, 'top') - 10 + 'px';
+          break;
+        case 39:
+          box.style.left = utils.css(box, 'left') + 10 + 'px';
+          break;
+        case 40:
+          box.style.top = utils.css(box, 'top') + 10 + 'px';
+          break;
+      }
+    }
+  </script>
+</body>
+
+</html>

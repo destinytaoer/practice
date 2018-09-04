@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>基于事件委托的无限级菜单</title>
+</head>
+
+<body>
+  <ul id='box'>
+    <li>
+      <span>一级菜单1</span>
+      <ul>
+        <li>
+          <span>二级菜单21</span>
+          <ul>
+            <li>
+              <span>三级菜单31</span>
+            </li>
+            <li>
+              <span>三级菜单32</span>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <span>二级菜单22</span>
+          <ul>
+            <li>
+              <span>三级菜单312</span>
+            </li>
+            <li>
+              <span>三级菜单323</span>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <span>一级菜单2</span>
+      <ul>
+        <li>
+          <span>二级菜单21</span>
+        </li>
+        <li>
+          <span>二级菜单22</span>
+          <ul>
+            <li>
+              <span>三级菜单312</span>
+            </li>
+            <li>
+              <span>三级菜单323</span>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <span>一级菜单3</span>
+      <ul>
+        <li>
+          <span>二级菜单31</span>
+        </li>
+        <li>
+          <span>二级菜单22</span>
+          <ul>
+            <li>
+              <span>三级菜单312</span>
+            </li>
+            <li>
+              <span>三级菜单323</span>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+  <script>
+    let oSpan = document.getElementsByTagName('span'),
+      oUl = document.getElementById('box');
+
+    [...oSpan].forEach((item) => {
+      let nextEle = item.nextElementSibling;
+      if (nextEle && nextEle.nodeName.toLowerCase() === 'ul') {
+        nextEle.style.display = 'none';
+      }
+    });
+
+    oUl.onclick = function (e) {
+      e = e || window.event;
+      let tar = e.target || e.srcElement;
+      if (tar.nodeName.toLowerCase() === 'span') {
+        let nextEle = tar.nextElementSibling;
+        if (nextEle && nextEle.nodeName.toLowerCase() === 'ul') {
+          if (nextEle.style.display == 'none') {
+            nextEle.style.display = 'block';
+          } else {
+            nextEle.style.display = 'none';
+
+            let oUl = nextEle.querySelectorAll('ul');
+            [...oUl].forEach((item) => {
+              item.style.display = 'none';
+            })
+          }
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>

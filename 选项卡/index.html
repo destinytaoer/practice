@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>选项卡</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .box {
+      margin: auto;
+      width: 400px;
+    }
+
+    .til {
+      display: flex;
+      width: 400px;
+      height: 50px;
+      line-height: 50px;
+    }
+
+    .til li {
+      flex: 1;
+      text-align: center;
+      border: 1px dashed seashell;
+    }
+
+    .til li.current {
+      background: darkorange;
+      color: #fff;
+    }
+
+    .content {
+      display: none;
+      width: 400px;
+      height: 200px;
+      text-align: center;
+      line-height: 200px;
+      background: #24ccc8;
+    }
+
+    .content.current {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="tab-box">
+    <div class="til">
+      <li class="current">JS</li>
+      <li>CSS</li>
+      <li>Vue</li>
+    </div>
+    <div class="content-box">
+      <div class="content current">JS</div>
+      <div class="content">CSS</div>
+      <div class="content">Vue</div>
+    </div>
+  </div>
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  <script src="index.js"></script>
+</body>
+
+</html>

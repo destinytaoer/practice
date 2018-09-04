@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>旋转魔方</title>
+  <style type="text/less">
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    .wh100 {
+      width: 100%;
+      height: 100%;
+    }
+    html, body, .box {
+      .wh100;
+      overflow: hidden;
+    }
+
+    .box {
+      background: url('./img/cube-bg.jpg') no-repeat;
+      background-size: cover;
+      perspective: 2000px;
+
+      .cube {
+        position: relative;
+        width: 4rem;
+        height: 4rem;
+        top: 50%;
+        left: 50%;
+        margin-top: -2rem;
+        margin-left: -2rem;
+        transform-style: preserve-3d;
+        transform: rotateX(45deg) rotateY(45deg);
+        transform-origin: 2rem 2rem -2rem;
+
+        li {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+
+          img {
+            .wh100;
+          }
+        }
+
+        li:nth-of-type(1) {
+          transform: translateY(-4rem) rotateX(90deg);
+          transform-origin: bottom;
+        }
+
+        li:nth-of-type(2) {
+          transform: translateY(4rem) rotateX(-90deg);
+          transform-origin: top;
+        }
+
+        li:nth-of-type(3) {
+          transform: translateX(-4rem) rotateY(-90deg);
+          transform-origin: right;
+        }
+
+        li:nth-of-type(4) {
+          transform: translateX(4rem) rotateY(90deg);
+          transform-origin: left;
+        }
+
+        li:nth-of-type(5) {
+          transform: translateZ(-4rem) rotateX(180deg);
+        }
+      }
+    }
+  </style>
+  <script src="less.js"></script>
+  <script>
+    //设计稿 750px
+    //html 设置 font-size
+    let clientW = document.documentElement.clientWidth || document.body.clientWidth;
+    document.documentElement.style.fontSize = clientW/750*100 + 'px';
+  </script>
+</head>
+
+<body>
+  <div class="box">
+    <ul class="cube">
+      <li><img src="img/cube-img1.png" alt=""></li>
+      <li><img src="img/cube-img2.png" alt=""></li>
+      <li><img src="img/cube-img3.png" alt=""></li>
+      <li><img src="img/cube-img4.png" alt=""></li>
+      <li><img src="img/cube-img5.png" alt=""></li>
+      <li><img src="img/cube-img6.png" alt=""></li>
+    </ul>
+  </div>
+  <script>
+    /**
+     * 思路：根据手指移动的距离去设置盒子旋转角度
+     * 
+     * 1. 需要存储盒子的初始旋转角度
+     * 2. 开始时存储初始鼠标位置
+     * 3. 移动时，根据现在鼠标位置 - 初始鼠标位置，得到改变的值，根据这个值来设置 rotateX、rotateY 来实现旋转
+     * 
+     */
+    let oUl = document.getElementsByClassName('cube')[0];
+
+    let strX = 45,
+    strY = 45;
+    document.ontouchstart = function(e) {
+      let touch = e.touches || e.targetTouches;
+      // console.log(touch[0]);
+      this.mx = touch[0].pageX;
+      this.my = touch[0].pageY;
+    }
+    document.ontouchmove = function(e) {
+      let touch = e.touches || e.targetTouches;
+      this.changeX = touch[0].pageX - this.mx;
+      this.changeY = touch[0].pageY - this.my;
+
+      // 注意，这里应该使用 横轴的改变值来设置 rotateY，使用 纵轴的值来设置 rotateX，需要开始值减去变化值，是因为方向刚好相反，向下划的时候应该往前旋转为减少值
+      // 继续旋转会改变其坐标值
+      this.x = (strX - this.changeY)%360;
+      this.y = (strY - this.changeX)%360;
+      oUl.style.transform = `rotateY(${this.x}deg) rotateX(${this.y}deg)`;
+    }
+
+    document.ontouchend = function (e) {
+      strX = this.x;
+      strY = this.y;
+    }
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>多级导航</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    .clearfix::after {
+      content: '';
+      display: table;
+      clear: both;
+    }
+
+    .menuBox {
+      margin: 20px auto;
+      width: 700px;
+      height: 270px;
+      border: 1px solid #000;
+    }
+
+    .navBox {
+      float: left;
+      width: 200px;
+    }
+
+    .navBox ul li {
+      background: lightblue;
+      height: 30px;
+      line-height: 30px;
+    }
+
+    .navBox ul li a {
+      display: block;
+      padding: 0 10px;
+      font-size: 14px;
+      height: 100%;
+      color: #555;
+    }
+
+    .detailBox {
+      display: none;
+      float: left;
+      width: 500px;
+      height: 100%;
+      background: #eee;
+      font-size: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 使用 HTML + CSS 实现的话，需要多个详情页，每一个详情页都是 li 的子元素才可以  -->
+<section class="menuBox">
+  <nav class="navBox">
+    <ul>
+      <li>
+        <a href="#" target="_blank">导航1</a>
+      </li>
+      <li>
+        <a href="#" target="_blank">导航2</a>
+      </li>
+      <li>
+        <a href="#" target="_blank">导航3</a>
+      </li>
+      <li>
+        <a href="#" target="_blank">导航4</a>
+      </li>
+      <li>
+        <a href="#" target="_blank">导航5</a>
+      </li>
+      <li>
+        <a href="#" target="_blank">导航6</a>
+      </li>
+      <li>
+        <a href="#" target="_blank">导航7</a>
+      </li>
+      <li>
+        <a href="#" target="_blank">导航8</a>
+      </li>
+      <li>
+        <a href="#" target="_blank">导航9</a>
+      </li>
+    </ul>
+  </nav>
+  <div class="detailBox">导航1对应的详情内容</div>
+</section>
+  <script src="jquery-3.3.1.js"></script>
+  <script>
+    let $detailBox = $('.detailBox');
+
+    $(document).on('mouseover', function(e) {
+      let target = e.target,
+      tag = target.tagName,
+      $target = $(target),
+      $pars = $target.parents();
+      
+      let flag = $pars.filter('.navBox').length > 0 ? true : false;
+
+      //=> 事件源是 navBox 下的 a 或者 li
+      if ((tag === 'A' || tag === 'LI') && flag) {
+        let index = $target.text().match(/\d+/);
+        $detailBox.show().html(`导航${index}`);
+        $target.css('background','lightpink');
+        $target.parent().siblings().each(function(index, item) {
+          $(item).children('a').css('background','lightblue')
+        })
+        return;
+      }
+      //=> 事件源是 detailBox 或者他的后代元素，不做处理，下面使用阻止冒泡替代
+      // if ($target.hasClass('detailBox') || $pars.filter('.detailBox').length > 0) {
+      //   return;
+      // }
+      $('.navBox').find('a').css('background','lightblue');
+      $detailBox.hide();
+    })
+    $detailBox.on('mouseover', function(e) {
+      e.stopPropagation();
+    })
+  </script>
+</body>
+
+</html>

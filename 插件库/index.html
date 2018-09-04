@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+<body>
+  <div id="box">
+    <ul>
+      <li></li>
+      <li></li>
+      <li ></li>
+      <li id="a"></li>
+      <li></li>
+    </ul>
+  </div>
+  <script>
+    var li = document.getElementById('a');
+    var index = index(li);
+    console.log(index);
+    function index(curEle) {
+    var parent = curEle.parentNode;
+    var sons = children(parent);
+    var nodeName = curEle.nodeName;
+    var ary = [];
+    sons.forEach(function (item) {
+      if (item.nodeName === nodeName) {
+        ary.push(item);
+      }
+    });
+    return ary.indexOf(curEle);
+  }
+  function children(curEle) {
+    var nodeList = curEle.childNodes,
+      result = [];
+
+    for (var i = 0; i < nodeList.length; i++) {
+      var item = nodeList[i];
+      if (item.nodeType === 1) {
+        result.push(item);
+      }
+    }
+    return result;
+  }
+  </script>
+</body>
+</html>

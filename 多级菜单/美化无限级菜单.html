@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>美化目录</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .menuBox {
+      width: 300px;
+      height: 100%;
+      overflow: auto;
+      background: linear-gradient(to bottom, lightblue, lightcyan, lightpink)
+    }
+
+    .menuBox li {
+      position: relative;
+    }
+
+    .menuBox li em {
+      position: absolute;
+      left: 0;
+      top: 9px;
+      width: 16px;
+      height: 16px;
+      background: url("img/icon.png") no-repeat;
+    }
+
+    .menuBox li em.plus {
+      background-position: -59px -28px;
+    }
+
+    .menuBox li em.minus {
+      background-position: -42px -29px;
+    }
+
+    .menuBox li span {
+      line-height: 35px;
+      margin-left: 20px;
+      font-size: 14px;
+    }
+
+    .menuBox .level1 {
+      margin-left: 10px;
+    }
+
+    .menuBox .level2 {
+      margin-lef+t: 20px;
+    }
+
+    .menuBox .level3 {
+      margin-left: 30px;
+    }
+
+    .menuBox .level4 {
+      margin-left: 40px;
+    }
+
+    .menuBox ul:not(.level1) {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <section class="menuBox">
+    <ul class="level1">
+      <li>
+        <!-- plus: +, minus: - -->
+        <em class="plus"></em>
+        <span>产品技术部</span>
+        <ul class="level2">
+          <li>
+            <span>产品小组</span>
+          </li>
+          <li>
+            <em class="plus"></em>
+            <span>UI小组</span>
+
+            <ul class="level3">
+              <li>
+                <span>UI设计师</span>
+              </li>
+              <li>
+                <span>UE体验师</span>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <em class="plus"></em>
+            <span>开发小组</span>
+            <ul class="level3">
+              <li>
+                <em class="plus"></em>
+                <span>前端开发</span>
+                <ul class="level4">
+                  <li>
+                    <span>传统前端开发</span>
+                  </li>
+                  <li>
+                    <span>VR/AI开发</span>
+                  </li>
+                  <li>
+                    <span>NATIVE_APP开发</span>
+                  </li>
+                  <li>
+                    <span>NODE开发</span>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <span>后台开发</span>
+              </li>
+              <li>
+                <span>服务器开发</span>
+              </li>
+              <li>
+                <span>公共技术研发团队 </span>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <span>测试小组</span>
+          </li>
+          <li>
+            <span>运维小组</span>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <em class="plus"></em>
+        <span>产品技术部</span>
+        <ul class="level2">
+          <li>
+            <span>产品小组</span>
+          </li>
+          <li>
+            <em class="plus"></em>
+            <span>UI小组</span>
+
+            <ul class="level3">
+              <li>
+                <span>UI设计师</span>
+              </li>
+              <li>
+                <span>UE体验师</span>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <em class="plus"></em>
+            <span>开发小组</span>
+            <ul class="level3">
+              <li>
+                <em class="plus"></em>
+                <span>前端开发</span>
+                <ul class="level4">
+                  <li>
+                    <span>传统前端开发</span>
+                  </li>
+                  <li>
+                    <span>VR/AI开发</span>
+                  </li>
+                  <li>
+                    <span>NATIVE_APP开发</span>
+                  </li>
+                  <li>
+                    <span>NODE开发</span>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <span>后台开发</span>
+              </li>
+              <li>
+                <span>服务器开发</span>
+              </li>
+              <li>
+                <span>公共技术研发团队 </span>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <span>测试小组</span>
+          </li>
+          <li>
+            <span>运维小组</span>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <em class="plus"></em>
+        <span>产品技术部</span>
+        <ul class="level2">
+          <li>
+            <span>产品小组</span>
+          </li>
+          <li>
+            <em class="plus"></em>
+            <span>UI小组</span>
+
+            <ul class="level3">
+              <li>
+                <span>UI设计师</span>
+              </li>
+              <li>
+                <span>UE体验师</span>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <em class="plus"></em>
+            <span>开发小组</span>
+            <ul class="level3">
+              <li>
+                <em class="plus"></em>
+                <span>前端开发</span>
+                <ul class="level4">
+                  <li>
+                    <span>传统前端开发</span>
+                  </li>
+                  <li>
+                    <span>VR/AI开发</span>
+                  </li>
+                  <li>
+                    <span>NATIVE_APP开发</span>
+                  </li>
+                  <li>
+                    <span>NODE开发</span>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <span>后台开发</span>
+              </li>
+              <li>
+                <span>服务器开发</span>
+              </li>
+              <li>
+                <span>公共技术研发团队 </span>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <span>测试小组</span>
+          </li>
+          <li>
+            <span>运维小组</span>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+  <script src="jquery-3.3.1.js"></script>
+  <script>
+    let $menuBox = $('.menuBox');
+    $menuBox.on('click', function (e) {
+      let tar = e.target,
+        $tar = $(tar),
+        tarTag = tar.tagName;
+
+      //=> 合并事件源，如果点击的是 em，让 tar 也等于 span，此时 tar 只有 span才处理，统一基于 span 位置为参照即可
+      if (tarTag === 'EM') {
+        $tar = $tar.next();
+        tar = $tar[0];
+        tarTag = tar.tagName;
+      }
+
+      if (tarTag === 'SPAN') {
+        //=> 用于判断动画是都在运行中，如果运行中，就什么都不干，用于防止连续点击出现的动画未完成
+        if(this.animated) return;
+        let $ul = $tar.next('ul'),
+          $em = $tar.prev('em');
+        //=> 基于 JQ 获取的结果一般都是 JQ 对象，即使没有获取到元素也是一个 length 为 0 的空对象，而不是 null
+        if ($ul.length === 0) return;
+
+        //=> em 的样式类名，如果是 plus，说明当前是折叠的，应当展开
+        this.animated = true;
+        if ($em.hasClass('plus')) {
+          $em.addClass('minus').removeClass('plus');
+          $ul.stop().slideDown(200,() => {
+            this.animated = false;
+          });
+        } else {
+          $em.addClass('plus').removeClass('minus');
+          //=> 外层级收起，里面的小层级也都收起
+          $ul.stop().slideUp(200, () => {
+            $ul.find('em').addClass('plus').removeClass('minus');
+            $ul.find('ul').css('display', 'none');
+            this.animated = false;
+          });
+        }
+      }
+
+    });
+  </script>
+</body>
+
+</html>

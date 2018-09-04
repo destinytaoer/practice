@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>拖拽</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+    #div1 {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      background: sandybrown;
+      border-radius: 50%;
+      user-select: none;
+      cursor: move;
+    }
+  </style>
+</head>
+<body>
+  <div id="div1"></div>
+  <script>
+    /**
+     * 按下鼠标时，记录鼠标的位置和盒子的位置
+     * 当鼠标移动时，记录鼠标 x y 轴移动距离，让盒子相应的移动这么多即可
+     **/
+    let oDiv = document.getElementById('div1');
+
+    oDiv.onmousedown = function (e) {
+      e = e || window.event;
+      //=> 盒子的初始位置
+      this.startX = this.offsetLeft;
+      this.startY = this.offsetTop;
+
+      //=> 鼠标的初始位置
+      this.mouseX = e.pageX;
+      this.mouseY = e.pageY;
+
+      this.canM = true;
+    };
+    document.onmousemove = function (e) {
+      if (!oDiv.canM) return;
+      e = e || window.event;
+      let x = e.pageX - oDiv.mouseX,
+        y = e.pageY - oDiv.mouseY;
+      oDiv.style.left = oDiv.startX + x + 'px';
+      oDiv.style.top =oDiv.startY + y + 'px';
+    };
+    document.onmouseup = function (e) {
+      e = e || window.event;
+      //=> 松开，清除移动事件
+      oDiv.canM = false;
+    };
+  </script>
+</body>
+</html>

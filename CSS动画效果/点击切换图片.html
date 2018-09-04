@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>animation</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    ul {
+      list-style: none;
+    }
+    .wrap {
+      position: relative;
+      width: 100vm;
+      height: 100vh;
+    }
+    .wrap > img {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      transition: z-index 1.2s ease-out;
+    }
+    .wrap > img:first-child {
+      z-index: 1;
+    }
+    .wrap img:target {
+      z-index: 20;
+    }
+    .wrap ul {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      z-index: 100;
+      font-size: 0;
+    }
+    .wrap ul li {
+      display: inline-block;
+      width: 100px;
+      height: 100px;
+      margin: 0 10px;
+      border: 10px solid rgba(0,0,0,0.5);
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    .wrap ul li img {
+      width: 100%;
+      height: 100%;
+    }
+
+    @keyframes slideLeft {
+      0% {
+        transform: translate(-500px);
+      }
+      100% {
+        transform: translate(0);
+      }
+    }
+    #bg1:target {
+      animation: slideLeft 1s;
+    }
+    @keyframes slideTop {
+      0% {
+        transform: translate(0, -500px);
+      }
+      100% {
+        transform: translate(0);
+      }
+    }
+    #bg2:target {
+      animation: slideTop 1s;
+    }
+    @keyframes zoomIn {
+      0% {
+        transform: scale(0);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+    #bg3:target {
+      animation: zoomIn 1s;
+    }
+    @keyframes zoomOut {
+      0% {
+        transform: scale(2);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+    #bg4:target {
+      animation: zoomOut 1s;
+    }
+    @keyframes rotate {
+      0% {
+        transform: scale(0) rotate(0deg);
+      }
+      100% {
+        transform: scale(1) rotate(360deg);
+      }
+    }
+    #bg5:target {
+      animation: rotate 1s;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <img src="img/bg1.jpg" alt="" id="bg1">
+  <img src="img/bg2.jpg" alt="" id="bg2">
+  <img src="img/bg3.jpg" alt="" id="bg3">
+  <img src="img/bg4.jpg" alt="" id="bg4">
+  <img src="img/bg5.jpg" alt="" id="bg5">
+  <ul>
+    <li>
+      <a href="#bg1"><img src="img/bg1.jpg" alt=""></a>
+    </li>
+    <li>
+      <a href="#bg2"><img src="img/bg2.jpg" alt=""></a>
+    </li>
+    <li>
+      <a href="#bg3"><img src="img/bg3.jpg" alt=""></a>
+    </li>
+    <li>
+      <a href="#bg4"><img src="img/bg4.jpg" alt=""></a>
+    </li>
+    <li>
+      <a href="#bg5"><img src="img/bg5.jpg" alt=""></a>
+    </li>
+  </ul>
+</div>
+</body>
+</html>

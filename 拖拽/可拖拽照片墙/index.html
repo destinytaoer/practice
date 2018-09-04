@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>可拖拽照片墙</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    .imgBox {
+      margin: 20px auto;
+      border: 2px dashed darksalmon;
+      width: 480px;
+      height: 640px;
+      padding: 10px 0 0 10px;
+      background: orange;
+      list-style: none;
+      position: relative;
+    }
+
+    .imgBox li {
+      float: left;
+      width: 150px;
+      height: 150px;
+      margin: 0 10px 10px 0;
+      background: paleturquoise;
+      cursor: move;
+    }
+
+    .imgBox li img {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <ul class="imgBox">
+    <li>
+      <img src="img/1.png" alt="">
+    </li>
+    <li>
+      <img src="img/2.png" alt="">
+    </li>
+    <li>
+      <img src="img/3.png" alt="">
+    </li>
+    <li>
+      <img src="img/4.png" alt="">
+    </li>
+    <li>
+      <img src="img/5.png" alt="">
+    </li>
+    <li>
+      <img src="img/6.png" alt="">
+    </li>
+    <li>
+      <img src="img/7.png" alt="">
+    </li>
+    <li>
+      <img src="img/8.png" alt="">
+    </li>
+    <li>
+      <img src="img/9.png" alt="">
+    </li>
+    <li>
+      <img src="img/10.png" alt="">
+    </li>
+    <li>
+      <img src="img/11.png" alt="">
+    </li>
+    <li>
+      <img src="img/12.png" alt="">
+    </li>
+  </ul>
+</body>
+
+</html>
+<script src="js/jquery-3.3.1.js"></script>
+<script src="js/JQ订阅发布 drag.js"></script>
+<script>
+  /*
+   * 1、拖拽对应的图片  我们让对应的图片移动
+   * 2、判断碰撞 跟谁碰 就让谁变色
+   * 3、我们把拖动的这张图片跟 距离它最近的一张图交换位置
+   * */
+//给每个li 加定位
+var $Lis = $('.imgBox li');
+console.log([...$Lis]);
+
+[...$Lis].reverse().forEach((item) => {
+  //reverse() 只是对数组排序  不会对页面在成任何影响
+  //每一个li的当前位置 可以用它的offset值进行定位
+  item.style.left = item.offsetLeft + 'px';
+  item.style.top = item.offsetTop + 'px';
+  item.style.position = 'absolute'; // item直接脱离文档流
+
+  let drag = new Drag(item);
+
+  drag.dragstart.add(addZIndex);
+  drag.draging.add(isHit);
+  drag.dragend.add(changePos);
+});
+
+/*
+  * 提升拖动元素的zIndex
+  * */
+let n = 1;
+
+function addZIndex(curEle) {
+  curEle.style.zIndex = n++;
+}
+
+
+/*
+  * 接下来 我们处理碰撞问题、
+  * */
+function isHit(curEle) {
+  //判断是否发生碰撞
+  console.log(this);
+  curEle.sl = curEle.offsetLeft; // 拖动元素的 左边 到 盒子的距离
+  curEle.el = curEle.sl + curEle.offsetWidth; // 拖动元素的 右边 到 盒子的距离
+  curEle.st = curEle.offsetTop; //拖动元素的上边 到盒子的距离
+  curEle.et = curEle.st + curEle.offsetHeight; //拖动元素下边 到  盒子的距离
+  //我们需要 拿拖动元素 跟其他所有元素作比较； 查看是否碰撞
+
+  curEle.ary = []; // 存放跟 拖动元素 碰撞上 的 元素
+  [...$Lis].forEach((item) => {
+    // 循环所有的li;用拖动元素跟其他元素作比较
+    if (item === curEle) return;
+    item.sl = item.offsetLeft;
+    item.el = item.sl + item.offsetWidth;
+    item.st = item.offsetTop;
+    item.et = item.st + item.offsetHeight;
+    if (curEle.sl > item.el || curEle.el < item.sl || curEle.st > item.et || curEle.et < item.st) {
+      //撞不上的
+      item.style.background = ''; //直接设成空； 会使用css默认的
+    } else {
+      item.style.background = '#15b3fb';
+      curEle.ary.push(item); // 把能碰撞的元素 放到 this.ary中
+    }
+  });
+}
+
+/*
+  * 交换位置
+  * */
+function changePos(curEle) {
+  //要跟距离拖动元素最近的那个li交换位置
+  curEle.ary = curEle.ary || [];
+
+  //=> 计算每个碰撞元素左上角，距离拖动元素左上角的距离
+  curEle.ary.forEach((item) => {
+    // l 是 拖动元素距离 当前碰撞元素的 横向差值
+    // t 是 拖动元素距离 当前碰撞元素的 纵向差值
+    var l = curEle.offsetLeft - item.offsetLeft,
+      t = curEle.offsetTop - item.offsetTop;
+    item.style.background = ''; // 让发生碰撞的元素松手时 让颜色恢复
+    item.instance = Math.pow(l, 2) + Math.pow(t, 2)
+  });
+
+  //再根据每个元素的instance排序，排序后第一个就是最短距离
+  curEle.ary.sort((a, b) => {
+    return a.instance - b.instance
+  });
+
+  //this.startX this.startY 存储的是盒子初始位置
+  // item.offsetLeft item.offsetTop 存储的 item位置
+  //若数组为空,则直接回到原来的位置；否则交换位置
+  if (!curEle.ary.length) {
+    $(curEle).animate({
+      left: curEle.startX,
+      top: curEle.startY
+    }, 200);
+  } else {
+    $(curEle).stop().animate({
+      left: curEle.ary[0].offsetLeft,
+      top: curEle.ary[0].offsetTop
+    }, 200);
+
+    $(curEle.ary[0]).stop().animate({
+      left: this.startX,
+      top: this.startY
+    }, 200);
+  }
+
+}
+</script>

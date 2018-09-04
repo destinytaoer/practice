@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    #box {
+      width: 100px;
+      height: 200px;
+      overflow: hidden;
+      border: 1px solid #0c6d64;
+      margin:0 auto;
+    }
+  </style>
+</head>
+<body>
+  <div id="box">
+    <p>
+      开头aaaaaaaaaaaa
+      aaaaaaaaaaaa
+      aaaaaaaaaaaa
+      aaaaaaaaaaaa
+      aaaaaaaaaaaa
+      aaaaaaaaaaaa
+      aaaaaaaaaaaa
+      aaaaaaaaaaaa
+      aaaaaaaaaaaa
+      aaaaaaaaaaaa
+      aaaaaaaaaaaa
+      aaaaaaaaaaaa
+      aaaaaaaaaaaa底部
+    </p>
+  </div>
+  <script>
+    let box = document.getElementById('box');
+    let maxH = box.scrollHeight - box.clientHeight;
+    // console.log(maxH);
+    // var timer = window.setInterval(() => {
+    //   if (box.scrollTop >= maxH) {
+    //     box.scrollTop = 0;
+    //   }
+    //   box.scrollTop++;
+    // },20)
+
+    //=> scrollTop 存在最大值，超过最大值时，仍然是哪个最大值。
+    var timer2 = null;
+    var fn = function () {
+      clearTimeout(timer2);
+      var h = box.scrollTop++;
+      if (h == box.scrollTop) {
+        box.scrollTop = 0
+      }
+      timer2 = window.setTimeout(function() {
+        fn();
+      }, 20)
+    }
+    fn();
+  </script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>拖拽</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    #div1 {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      background: sandybrown;
+      border-radius: 50%;
+      user-select: none;
+      cursor: move;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="div1"></div>
+  <script>
+    /**
+     * 按下鼠标时，记录鼠标的位置和盒子的位置
+     * 当鼠标移动时，记录鼠标 x y 轴移动距离，让盒子相应的移动这么多即可
+     **/
+    let oDiv = document.getElementById('div1');
+
+    oDiv.onmousedown = dragStart;
+
+    //=> dragStart: 控制鼠标按下时，记录鼠标位置和盒子位置
+    function dragStart(e) {
+      e = e || window.event;
+      //=> this 都是盒子
+      // 盒子的初始位置
+      this.startX = this.offsetLeft;
+      this.startY = this.offsetTop;
+      // 鼠标的位置
+      this.mouseX = e.clientX;
+      this.mouseY = e.clientY;
+      
+      //=> 由于后面清除了事件，所以需要在这里进行绑定
+      document.onmousemove = dragMove.bind(oDiv);
+      document.onmouseup = dragEnd.bind(oDiv);
+    }
+
+    //=> 让盒子跟着鼠标移动，绑定在 document 上,防止鼠标丢失
+    function dragMove(e) {
+      e = e || window.event;
+      //=> this 都是盒子
+      // 根据鼠标的移动距离和盒子的初始位置来设置盒子的当前位置
+      let x = e.clientX - this.mouseX + this.startX,
+        y = e.clientY - this.mouseY + this.startY;
+      this.style.left = x + 'px';
+      this.style.top = y + 'px';
+    }
+
+    //=> 拖拽停止，移除绑定在 document 上的事件
+    function dragEnd(e) {
+      // 移除绑定的事件
+      document.onmousemove = null;
+      document.onmouseup = null;
+    }
+  </script>
+</body>
+
+</html>

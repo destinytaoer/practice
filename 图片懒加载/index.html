@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>图片的懒加载</title>
+  <style>
+    *{
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
+    .box {
+      width: 100%;
+      height: 150%;
+      background: lightcoral;
+    }
+    img {
+      width: 500px;
+      height: 500px;
+    }
+  </style>
+</head>
+<body>
+  <div id="box" class="box"></div>
+  <img src="img/default.gif" realSrc="img/1.jpg" alt="">
+  <div class="box"></div>
+  <script src="js/utils.js"></script>
+  <script src="js/lazyLoad.js"></script>
+</body>
+</html>

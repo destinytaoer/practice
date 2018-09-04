@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>drag</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    div {
+      width: 100px;
+      height: 100px;
+      position: fixed;
+      border-radius: 50%;
+      cursor: move;
+    }
+
+    #box {
+      background: lightblue;
+    }
+
+    #box1 {
+      background: lightpink;
+    }
+  </style>
+</head>
+
+<body>
+  <div id='box'></div>
+  <div id='box1'></div>
+  <script>
+    class Subscribe {
+      constructor() {
+        this.ponds = {};
+      }
+
+      add(type, fn) {
+        this.ponds[type] = this.ponds[type] || [];
+        let n = this.ponds[type].indexOf(fn);
+        if (n === -1) {
+          this.ponds[type].push(fn);
+        }
+      }
+
+      fire(type, ...arg) {
+        let ary = this.ponds[type];
+        if (!ary) return;
+        for (let i = 0; i < ary.length; i++) {
+          let item = ary[i];
+          if (item === null) {
+            ary.splice(i, 1);
+            i--;
+            continue;
+          }
+          item(...arg);
+        }
+      }
+
+      remove(type, fn) {
+        let ary = this.ponds[type];
+        if (!ary) return;
+        let n = ary.indexOf(fn);
+        if (n !== -1) {
+          ary[n] = null;
+        }
+      }
+    }
+  </script>
+  <script>
+    class Drag extends Subscribe {
+      constructor(ele) {
+        //=> 继承 Subscribe
+        super();
+
+        //=> 初始化订阅名单
+        this.ponds['down'] = [];
+        this.ponds['move'] = [];
+        this.ponds['up'] = [];
+
+        //=> 预先定义需要使用的属性
+        this.ele = ele;
+        ['strX', 'strY', 'mouseX', 'mouseY', 'curL', 'curT'].forEach(item => {
+          this[item] = null;
+        });
+
+        //=> 绑定 down 事件
+        this.DOWN = this.down.bind(this);
+        this.ele.addEventListener('mousedown', this.DOWN);
+      }
+
+      down(e) {
+        //=> 记录盒子和鼠标按下的初始位置
+        this.strX = parseFloat(window.getComputedStyle(this.ele).left);
+        this.strY = parseFloat(window.getComputedStyle(this.ele).top);
+        this.mouseX = e.clientX;
+        this.mouseY = e.clientY;
+
+        //=> 绑定 move 和 up 事件，通过 bind 保证执行时的 this 是实例，保存起来是为了后面可以移除
+        this.MOVE = this.move.bind(this);
+        this.UP = this.up.bind(this);
+        document.addEventListener('mousemove', this.MOVE);
+        document.addEventListener('mouseup', this.UP);
+
+        //=> 发布 按下 事件
+        this.fire.call(this, 'down', this.ele, e);
+      }
+
+      move(e) {
+        e = e || window.event;
+        e.preventDefault();
+        //=> 计算当前位置
+        this.curL = e.clientX - this.mouseX + this.strX;
+        this.curT = e.clientY - this.mouseY + this.strY;
+
+        //=> 边界判断
+        let minL = 0,
+          minT = 0,
+          maxL = document.documentElement.clientWidth - this.ele.offsetWidth,
+          maxT = document.documentElement.clientHeight - this.ele.offsetHeight;
+
+        this.curT = this.curT > maxT ? maxT : (this.curT < minT ? minT : this.curT);
+        this.curL = this.curL > maxL ? maxL : (this.curL < minL ? minL : this.curL);
+
+        //=> 设定当前值
+        this.ele.style.left = this.curL + 'px';
+        this.ele.style.top = this.curT + 'px';
+
+        //=> 发布 移动 事件
+        this.fire.call(this, 'move', this.ele, e);
+      }
+
+      up(e) {
+        //=> 移除 move 和 up 事件
+        document.removeEventListener('mousemove', this.MOVE);
+        document.removeEventListener('mouseup', this.UP);
+
+        //=> 发布 松开 事件
+        this.fire.call(this, 'up', this.ele, e);
+      }
+    }
+  </script>
+  <script>
+    let box = document.getElementById('box'),
+      bo1 = document.getElementById('box1');
+    let drag = new Drag(box),
+      drag1 = new Drag(box1);
+
+    drag.add('down', addZIndex);
+    drag.add('down', stopAnimate);
+    drag.add('move', initAnimate);
+    drag.add('up', fly);
+    drag.add('up', drop);
+    drag1.add('down', addZIndex);
+    drag1.add('down', stopAnimate);
+    drag1.add('move', initAnimate);
+    drag1.add('up', fly);
+    drag1.add('up', drop);
+
+
+    //=> 提升 z-index
+    let n = 1;
+
+    function addZIndex(curEle) {
+      curEle.style.zIndex = n++;
+    }
+
+    function initAnimate(curEle) {
+      //=> 水平初速度
+      if (!curEle.lastFly) {
+        curEle.speedFly = 0;
+        curEle.lastFly = curEle.offsetLeft;
+      }
+      curEle.speedFly = curEle.offsetLeft - curEle.lastFly;
+      curEle.lastFly = curEle.offsetLeft;
+
+      //=> 垂直初速度
+      if (!curEle.lastDrop) {
+        curEle.speedDrop = 0;
+        curEle.lastDrop = curEle.offsetTop;
+      }
+      curEle.speedDrop = curEle.offsetTop - curEle.lastDrop;
+      curEle.lastDrop = curEle.offsetTop;
+    }
+
+    function fly(curEle) {
+      let speed = curEle.speedFly;
+      let curL = curEle.offsetLeft,
+      minL = 0,
+      maxL = document.documentElement.clientWidth - curEle.offsetWidth;
+      curEle.flyTimer = setInterval(()=>{
+        Math.abs(speed) > 0.5 ? speed *= 0.98 : (speed = 0, clearInterval(curEle.flyTimer));
+        curL += speed;
+        if (curL >= minL && curL <= maxL) {
+          curEle.style.left = curL + 'px';
+        } else {
+          curL = curL > maxL ? maxL : minL;
+          curEle.style.left = curL + 'px';
+          speed *= -1;
+        }
+      }, 17);
+    }
+
+    function drop(curEle) {
+      let speed = curEle.speedDrop;
+      let curT = curEle.offsetTop,
+      flag = 0,
+      minT = 0,
+      maxT = document.documentElement.clientHeight - curEle.offsetHeight;
+      curEle.dropTimer = setInterval(()=>{
+        if (flag > 1) clearInterval(curEle.dropTimer);
+        speed += 9.8;
+        speed *= 0.98;
+        curT += speed;
+        if (curT >= minT && curT <= maxT) {
+          curEle.style.top = curT + 'px';
+          flag = 0;
+        } else {
+          curT = curT > maxT ? maxT : minT;
+          curEle.style.top = curT + 'px';
+          speed *= -1;
+          flag++;
+        }
+      }, 17);
+    }
+
+    function stopAnimate(curEle) {
+      clearInterval(curEle.flyTimer);
+      clearInterval(curEle.dropTimer);
+    }
+  </script>
+</body>
+
+</html>

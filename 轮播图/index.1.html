@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>轮播图</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    ul {
+      list-style: none;
+    }
+    a {
+      text-decoration: none;
+    }
+
+    .wrapper {
+      position: relative;
+      margin: 0 auto;
+      width: 600px;
+      overflow: hidden;
+    }
+
+    .img-box {
+      width: 600px;
+      height: 260px;
+      border: 1px solid #000;
+    }
+
+    .img-box li {
+      position: absolute;
+      width: 600px;
+      height: 260px;
+      background: url('http://www.sucaijishi.com/uploadfile/2014/0524/20140524124241131.gif') no-repeat center;
+    }
+    .img-box li:not(:first-of-type) {
+      left: 600px;
+    }
+    .img-box li img {
+      width: 100%;
+      height: 100%;
+    }
+
+    .img-box li p {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      box-sizing: border-box;
+      height: 40px;
+      line-height: 40px;
+      padding: 0 20px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+    }
+
+    #buttons {
+      position: absolute;
+      height: 10px;
+      width: 100px;
+      z-index: 2;
+      bottom: 20px;
+      left: 250px;
+    }
+
+    #buttons span {
+      cursor: pointer;
+      float: left;
+      border: 1px solid #fff;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #333;
+      margin-right: 5px;
+    }
+
+    #buttons .on {
+      background: orangered;
+    }
+
+    .arrow {
+      cursor: pointer;
+      line-height: 39px;
+      text-align: center;
+      font-size: 28px;
+      font-weight: bold;
+      width: 40px;
+      height: 60px;
+      line-height: 60px;
+      position: absolute;
+      z-index: 2;
+      top: 110px;
+      background-color: rgba(0, 0, 0, .3);
+      color: #fff;
+    }
+
+    .arrow:hover {
+      background-color: rgba(0, 0, 0, .7);
+    }
+    .wrapper:hover .arrow {
+      display: block;
+    }
+    #prev {
+      left: 0;
+    }
+    #next {
+      right: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrapper" id="wrapper">
+    <ul class=" img-box img-box ">
+    </ul>
+    <div id="buttons">
+    </div>
+    <a href="javascript:;" id="prev" class="arrow">&lt;</a>
+    <a href="javascript:;" id="next" class="arrow">&gt;</a>
+  </div>
+  <script src="js/utils.js"></script>
+  <script src="js/animate.js"></script>
+  <script src="js/index.1.js"></script>
+</body>
+
+</html>

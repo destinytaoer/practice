@@ -1,0 +1,22 @@
+body, ul, li {
+  padding: 0;
+  margin: 0;
+}
+
+ul {
+  list-style: none;
+}
+
+.rating {
+  width: 325px;
+  height: 65px;
+  margin: 100px auto;
+}
+
+.rating-item {
+  float: left;
+  width: 65px;
+  height: 65px;
+  background: url('../img/star.png') no-repeat;
+  cursor: pointer;
+}

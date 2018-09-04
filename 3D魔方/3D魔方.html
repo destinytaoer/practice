@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>魔方</title>
+  <style type="text/less">
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    ul {
+      list-style: none;
+    }
+    @w: 200px;
+    .box {
+      perspective: 2000px;
+
+      ul {
+        position: relative;
+        width: @w;
+        height: @w;
+        margin: 100px auto;
+        transform-style: preserve-3d;
+        animation: move 2s linear infinite;
+        transform-origin: @w/2 @w/2 -@w/2;
+
+        li {
+          position: absolute;
+          width: @w;
+          height: @w;
+          background: rgba(152, 251, 152, 0.5);
+          color: #fff;
+          font-size: 60px;
+          line-height: @w;
+          text-align: center;
+          border: 1px solid #aaa;
+          box-sizing: border-box;
+
+          &:nth-of-type(1) {
+            transform: translateZ(0px);
+          }
+
+          &:nth-of-type(2) {
+            top: @w;
+            transform: rotateX(-90deg);
+            transform-origin: top;
+          }
+
+          &:nth-of-type(3) {
+            left: -@w;
+            transform: rotateY(-90deg);
+            transform-origin: right;
+          }
+
+          &:nth-of-type(4) {
+            top: -@w;
+            transform: rotateX(90deg);
+            transform-origin: bottom;
+          }
+
+          &:nth-of-type(5) {
+            left: @w;
+            transform: rotateY(90deg);
+            transform-origin: left;
+          }
+
+          &:nth-of-type(6) {
+            transform: translateZ(-@w);
+          }
+        }
+      }
+    }
+
+    @keyframes move {
+      0% {
+        transform: rotateX(0deg) rotateY(0deg);
+      }
+
+      100% {
+        transform: rotateX(360deg) rotateY(360deg);
+      }
+    }
+  </style>
+  <script src="less.js"></script>
+</head>
+
+<body>
+  <div class="box">
+    <ul>
+      <li>1</li>
+      <li>2</li>
+      <li>3</li>
+      <li>4</li>
+      <li>5</li>
+      <li>6</li>
+    </ul>
+  </div>
+</body>
+
+</html>

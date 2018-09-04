@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>走马灯</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    ul {
+      list-style: none;
+    }
+    .box {
+      width: 896px;
+      height: 224px;
+      overflow: hidden;
+      margin: 20px auto;
+      border:1px dashed #ff6700;
+    }
+    .ul_box {
+      height: 224px;
+    }
+    .ul_box li {
+      float: left;
+      width: 224px;
+      height: 224px;
+    }
+    .ul_box li img {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <ul class="ul_box">
+      <li><img src="img/1.jpg" alt=""></li>
+      <li><img src="img/2.jpg" alt=""></li>
+      <li><img src="img/3.jpg" alt=""></li>
+      <li><img src="img/4.jpg" alt=""></li>
+    </ul>
+  </div>
+  <script>
+    var box = document.getElementsByClassName('box')[0];
+    var oUl = document.getElementsByClassName('ul_box')[0];
+
+    /* 实现无缝滚动：需要在 ul 中再添加跟之前一样的四张图片
+     * 重新设置 ul 的宽度
+     * 控制 box 的 scrollLeft
+     */
+    oUl.innerHTML += oUl.innerHTML;
+    oUl.style.width = 896 * 2 + 'px';
+
+    var max = box.scrollWidth - box.clientWidth;
+    var timer = window.setInterval(()=>{
+      if (box.scrollLeft == max) {
+        box.scrollLeft = 0;
+      }
+      box.scrollLeft+=2;
+    }, 20)
+
+  </script>
+</body>
+</html>

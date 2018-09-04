@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>拖拽</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #div1 {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      background: sandybrown;
+      border-radius: 50%;
+      user-select: none;
+      cursor: move;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="div1"></div>
+  <script src="js/jquery-3.3.1.js"></script>
+  <script src="js/JQ订阅发布 drag.js"></script>
+  <script>
+    let oDiv = $('#div1')[0];
+    let drag = new Drag(oDiv);
+    // drag.dragstart.add(fn1);
+    // drag.draging.add(fn2);
+    // drag.dragend.add(fn2);
+
+    drag.draging.add(initAnimate)
+
+    //=> 水平运动
+    drag.dragend.add(animateFly);
+
+    drag.dragend.add(animateDrop);
+
+    drag.dragstart.add(stopAnimate);
+
+    function initAnimate(curEle, e) {
+      //=> 水平初速度
+      //=> 让 lastFly 记录上一次位置，让 speedFly 记录最新的速度
+      if (typeof curEle.speedFly === 'undefined') {
+        curEle.speedFly = 0;
+        curEle.lastFly = curEle.offsetLeft;
+        return;
+      }
+      curEle.speedFly = curEle.offsetLeft - curEle.lastFly;
+      curEle.lastFly = curEle.offsetLeft;
+
+      //=> 垂直初速度
+      if (typeof curEle.speedDrop === 'undefined') {
+        curEle.speedDrop = 0;
+        curEle.lastDrop = curEle.offsetTop;
+        return;
+      }
+      curEle.speedDrop = curEle.offsetTop - curEle.lastDrop;
+      curEle.lastDrop = curEle.offsetTop;
+    }
+
+    function animateFly(curEle, e) {
+      let minL = 0,
+        maxL = document.documentElement.clientWidth - curEle.offsetWidth;
+
+      curEle.flyTimer = setInterval(() => {
+        //=> offsetLeft 获取的值都会四舍五入，所以在当前 left 基础上，加上小于 0.5 的速度，下一次获取的时候也会被省略掉
+        let curL = curEle.offsetLeft;
+
+        //=> 速度判断，小于 0.5 则清除定时器，否则以 0.98 指数衰减
+        Math.abs(curEle.speedFly) > 0.5 ? curEle.speedFly *= 0.98 : (curEle.speedFly = 0, clearInterval(curEle.flyTimer));
+
+        //=> 边界处理，如果超过边界，则让其到达边界，并且让速度变成反方向
+        curL += curEle.speedFly;
+        if (curL <= maxL && curL >= minL) {
+          curEle.style.left = curL + 'px'
+        } else {
+          curL = curL > maxL ? maxL : minL;
+          curEle.style.left = curL + 'px'
+          curEle.speedFly *= -1;
+        }
+        
+      }, 17);
+    }
+
+    function animateDrop(curEle, e) {
+      let speed = curEle.speedDrop,
+        minT = 0,
+        maxT = document.documentElement.clientHeight - curEle.offsetHeight,
+        flag = 0;
+
+      curEle.dropTimer = setInterval(() => {
+        if (flag > 1) {
+          clearInterval(curEle.dropTimer);
+          return;
+        }
+        //=> 加速以及指数衰减（阻力比），模拟自由落体
+        speed += 9.8;
+        speed *= 0.98;
+        let curT = curEle.offsetTop;
+        curT += speed;
+        if (curT <= maxT && curT >= minT) {
+          curEle.style.top = curT + 'px';
+          //=> 能执行到这里
+          flag = 0;
+        } else {
+          curT = curT > maxT ? maxT : minT;
+          curEle.style.top = curT + 'px';
+          speed *= -1;
+          //=> 如果 flag 到达底部，则让其加 1
+          flag++;
+        }
+      }, 17)
+    }
+    
+    function stopAnimate(curEle, e) {
+      clearInterval(curEle.flyTimer);
+      clearInterval(curEle.dropTimer);
+    }
+  </script>
+</body>
+
+</html>

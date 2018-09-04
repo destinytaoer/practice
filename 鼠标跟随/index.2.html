@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>鼠标跟随2</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    .container {
+      position: relative;
+      margin: 20px auto;
+    }
+
+    .container .imgBox li {
+      float: left;
+      margin-right: 18px;
+      width: 200px;
+      height: 150px;
+      border: 1px solid #DDD;
+    }
+
+    .container .imgBox li:nth-last-child(1) {
+      margin-right: 0;
+    }
+
+    .container .imgBox li img {
+      width: 100%;
+      height: 100%;
+    }
+
+    .container .mask {
+      position: absolute;
+      width: 400px;
+      height: 300px;
+    }
+
+    .container .mask img {
+      width: 100%;
+      height: 100%;
+    }
+
+    .clearfix:after {
+      display: table;
+      content: '';
+      clear: both;
+    }
+  </style>
+</head>
+
+<body>
+  <section class="container">
+    <ul class="imgBox clearfix">
+      <li>
+        <img src="https://wallpapers.wallhaven.cc/wallpapers/full/wallhaven-112248.jpg" alt="">
+      </li>
+      <li>
+        <img src="https://wallpapers.wallhaven.cc/wallpapers/full/wallhaven-115343.jpg" alt="">
+      </li>
+      <li>
+        <img src="https://wallpapers.wallhaven.cc/wallpapers/full/wallhaven-493450.jpg" alt="">
+      </li>
+      <li>
+        <img src="https://wallpapers.wallhaven.cc/wallpapers/full/wallhaven-252282.jpg" alt="">
+      </li>
+    </ul>
+  </section>
+  <script>
+    let oUl = document.getElementsByClassName('imgBox')[0],
+      container = document.getElementsByClassName('container')[0],
+      oLi = oUl.getElementsByTagName('li'),
+      mask = null;
+
+    document.onmousemove = function (e) {
+      e = e || window.event;
+      let tar = e.target || e.srcElement;
+      if (tar.parentNode.tagName == 'LI') {
+        let src = tar.getAttribute('src');
+        if (!mask) {
+          mask = document.createElement('div');
+          mask.className = 'mask';
+          mask.innerHTML = `<img src=${src}>`;
+          container.appendChild(mask);
+        } else {
+          mask.innerHTML = `<img src=${src}>`;
+          mask.style.display = 'block';
+        }
+        mask.style.left = e.pageX - container.offsetLeft + 20 + 'px';
+        mask.style.top = e.pageY - container.offsetTop + 20 + 'px';
+      } else if (mask) {
+        mask.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+
+</html>
