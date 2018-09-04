@@ -1,5 +1,22 @@
-~(function(){
-    var zhufengEffect = {
+/**
+ * animate: 较完善的动画插件，需要引入自己的 utils 库，使用了其中的 css 获取和设置样式
+ *
+ * @parameter
+ *  ele [Object] HTML 元素
+ *  obj [Object] 最终样式
+ *  duration [Number] 动画总时长
+ *  effect [Number] 可选的，动画效果，默认为 0 (linear)
+ *  callback [Function] 动画完成后执行
+ *
+ * @return
+ *   nothing
+ *
+ * by destiny on 2018.08.20
+ */
+~(function () {
+    //=> 定义动画效果
+    //=> t: time, c: changeL, d: duration, b: beginL
+    var default_effect = {
         //匀速
         Linear: function (t, b, c, d) {
             return c * t / d + b;
@@ -7,7 +24,7 @@
         //指数衰减的反弹缓动
         Bounce: {
             easeIn: function (t, b, c, d) {
-                return c - zhufengEffect.Bounce.easeOut(d - t, 0, c, d) + b;
+                return c - effect.Bounce.easeOut(d - t, 0, c, d) + b;
             },
             easeOut: function (t, b, c, d) {
                 if ((t /= d) < (1 / 2.75)) {
@@ -22,9 +39,9 @@
             },
             easeInOut: function (t, b, c, d) {
                 if (t < d / 2) {
-                    return zhufengEffect.Bounce.easeIn(t * 2, 0, c, d) * .5 + b;
+                    return effect.Bounce.easeIn(t * 2, 0, c, d) * .5 + b;
                 }
-                return zhufengEffect.Bounce.easeOut(t * 2 - d, 0, c, d) * .5 + c * .5 + b;
+                return effect.Bounce.easeOut(t * 2 - d, 0, c, d) * .5 + c * .5 + b;
             }
         },
         //二次方的缓动
@@ -177,25 +194,25 @@
         }
     };
     function move(ele, obj, duration,effect,callback) {
-        var zfEffect  = zhufengEffect.Linear;
+        var _effect  = default_effect.Linear;
         if(typeof effect ==="number"){
             switch (effect){
                 case  0 :
-                    zfEffect  = zhufengEffect.Linear;
+                    _effect  = default_effect.Linear;
                     break;
                 case  1:
-                    zfEffect = zhufengEffect.Elastic.easeInOut
+                    _effect = default_effect.Elastic.easeInOut
                     break;
                 case 2 :
-                    zfEffect = zhufengEffect.Bounce.easeInOut
+                    _effect = default_effect.Bounce.easeInOut
                     break;
                 case 3 :
-                    zfEffect = zhufengEffect.Back.easeIn;
+                    _effect = default_effect.Back.easeIn;
                     break;
                 case 4:
-                    zfEffect = zhufengEffect.Expo.easeOut
+                    _effect = default_effect.Expo.easeOut
             }
-        }else if(typeof effect =="function"){
+        } else if(typeof effect =="function"){
             callback = effect;
         }
         clearInterval(ele.timer);
@@ -217,7 +234,7 @@
                 return;
             }
             for (var attr in begin) {
-                var curPos = zfEffect(times, begin[attr], change[attr], duration);
+                var curPos = _effect(times, begin[attr], change[attr], duration);
                 utils.css(ele, attr, curPos);
             }
         }, 15)

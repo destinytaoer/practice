@@ -18,9 +18,11 @@ class Subscribe {
     // this.pond.forEach((item) => {
     //   item && item(...arg)
     // });
+    //=> 不使用上面的做法，用以防止数组的塌陷，避免在执行时取消订阅造成的问题。
     for (let i = 0; i < this.pond.length; i++) {
       let item = this.pond[i];
       if (item === null) {
+        //=> 去除掉需要移出的项
         this.pond.splice(i, 1);
         i--;
         continue;
