@@ -1,4 +1,4 @@
-/*
+/**
  * DOM 操作库
  */
 let dom = (function () {

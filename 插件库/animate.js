@@ -11,7 +11,7 @@
  * @return
  *   nothing
  *
- * by destiny on 2018.08.20
+ * by destiny on 2018-08-20
  */
 ~(function () {
     //=> 定义动画效果

@@ -1,4 +1,16 @@
-//=> 轮播图插件，传入 元素id 和 请求数据的地址url
+/**
+ * 轮播图插件
+ * fnName: description
+ *
+ * @parameter
+ *   id: [String] 元素id
+ *   url: [String] 请求数据的地址url
+ *
+ * @return
+ *   [Onject]: 实例
+ *
+ * by destiny on 2018-08-16
+ */
 function Banner(id, url) {
   this.url = url;
   //=> 需要操作的元素
@@ -165,5 +177,7 @@ Banner.prototype = {
   }
 }
 
-var banner = new Banner('wrapper', './data.json');
-banner.init();
+/* 使用
+ * var banner = new Banner('wrapper', './data.json');
+ * banner.init();
+ */

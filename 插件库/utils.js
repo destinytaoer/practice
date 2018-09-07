@@ -1,3 +1,6 @@
+/**
+ * 工具库
+ */
 var utils = (function () {
   function toJson(str) {
     var obj = {};

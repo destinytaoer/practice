@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>省市区三级联动下拉框</title>
+  <link rel="stylesheet" href="reset.min.css">
+  <style>
+    .menu {
+      margin: 20px auto;
+      padding: 20px;
+      width: 360px;
+      border: 1px solid lightblue;
+    }
+
+    .menu select {
+      display: inline-block;
+      margin-right: 10px;
+      padding: 0 5px;
+      width: 100px;
+      height: 30px;
+      line-height: 30px;
+      border: 1px solid #ddd;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="menu">
+    <select name="region" id="province">
+      <option value="">==请选择==</option>
+    </select>
+    <select name="region" id="city">
+      <option value="">==请选择==</option>
+    </select>
+    <select name="region" id="county">
+      <option value="">==请选择==</option>
+    </select>
+  </div>
+  <script src="cascadeMenu.js"></script>
+</body>
+
+</html>

@@ -6,7 +6,7 @@ let waterFallRender = (function () {
     let data = null,
       xhr = new XMLHttpRequest();
     xhr.open('get', url, false);
-  
+
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4 && /2\d{2}/.test(xhr.status)) {
         data = JSON.parse(xhr.responseText);
@@ -76,38 +76,42 @@ let waterFallRender = (function () {
     let timer = window.setInterval(function () {
       opa += 0.1;
       ele.style.opacity = opa;
-  
+
       if (ele.style.opacity >= 1) {
         clearInterval(timer);
       }
     }, 20)
   };
-  
+
   //=> GET-MORE：获取更多的图片（调用了前面的获取数据和绑定数据方法）
-  let getMore = function (url) {
-    let temp = getMinUl();
-    let sT = utils.scrollT(),
-      cH = utils.clientH(),
-      tarT = utils.offset(temp).top + temp.clientHeight;
-    
-    if (sT + cH > tarT) {
-      console.log(2);
-      let data = getData(url);
-      bindHTML(data);
-    }
+  let getMore = function (url, cb) {
+    let data = getData(url);
+    bindHTML(data);
+    cb && cb();
   };
 
   return {
     //=> INIT：模块入口，规划所有业务逻辑
-    init: function(){
+    init: function () {
       let data = null;
       data = getData('./data.json');
       bindHTML(data);
       let oImgs = document.getElementsByTagName('img');
       loadImgAll(oImgs);
+      let isBinding = false;
       window.onscroll = function () {
         loadImgAll(oImgs);
-        getMore('./data.json');
+        let temp = getMinUl();
+        let sT = utils.scrollT(),
+          cH = utils.clientH(),
+          tarT = utils.offset(temp).top + temp.clientHeight;
+
+        if (sT + cH > tarT && !isBinding) {
+          isBinding = true;
+          getMore('./data.json', function () {
+            isBinding = false;
+          });
+        }
       }
     }
   }

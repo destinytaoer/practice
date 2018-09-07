@@ -109,29 +109,31 @@
      */
     let oUl = document.getElementsByClassName('cube')[0];
 
+    // 在真实项目中，如果页面有滑动需求，一定要把 document 本身的滑动行为阻止掉（不阻止的话，浏览器中预览，会触发下拉刷新或者左右滑动切换页卡等功能）
+
     let strX = 45,
     strY = 45;
     document.ontouchstart = function(e) {
+      e.preventDefault();
       let touch = e.touches || e.targetTouches;
       // console.log(touch[0]);
-      this.mx = touch[0].pageX;
-      this.my = touch[0].pageY;
+      this.mx = touch[0].clientX;
+      this.my = touch[0].clientY;
     }
     document.ontouchmove = function(e) {
+      e.preventDefault();
       let touch = e.touches || e.targetTouches;
-      this.changeX = touch[0].pageX - this.mx;
-      this.changeY = touch[0].pageY - this.my;
-
-      // 注意，这里应该使用 横轴的改变值来设置 rotateY，使用 纵轴的值来设置 rotateX，需要开始值减去变化值，是因为方向刚好相反，向下划的时候应该往前旋转为减少值
-      // 继续旋转会改变其坐标值
-      this.x = (strX - this.changeY)%360;
-      this.y = (strY - this.changeX)%360;
-      oUl.style.transform = `rotateY(${this.x}deg) rotateX(${this.y}deg)`;
+      this.changeX = touch[0].clientX - this.mx;
+      this.changeY = touch[0].clientY - this.my;
     }
 
     document.ontouchend = function (e) {
-      strX = this.x;
-      strY = this.y;
+      e.preventDefault();
+      // 注意，这里应该使用 横轴的改变值来设置 rotateY，使用 纵轴的值来设置 rotateX，需要开始值减去变化值，是因为方向刚好相反，向下划的时候应该往前旋转为减少值
+      // 继续旋转会改变其坐标值
+      strX = strX - this.changeY;
+      strX = strY - this.changeX;
+      oUl.style.transform = `rotateX(${strY}deg) rotateY(${strX}deg)`;
     }
 
   </script>
