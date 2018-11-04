@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>todolist</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    html,body {
+      width: 100%;
+    }
+    .header {
+      width: 100%;
+      padding: 0 20px;
+      line-height: 60px;
+      background: #111;
+      color: #fff;
+    }
+    .header h1 {
+      font-size: 20px;
+      font-weight: normal;
+      cursor: pointer;
+    }
+    
+    .content {
+      margin: 30px auto;
+      width: 800px;
+      min-height: 200px;
+      padding: 20px;
+      border-radius: 5px;
+      background: #e7e1cd;
+      border: 1px solid #ccc;
+    }
+    .inp {
+      width: 100%;
+      height: 40px;
+      margin: 10px auto;
+      padding-left: 10px;
+      border-radius: 5px;
+      border: none;
+    }
+    .todo-list{
+      list-style: none;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-top: 20px;
+      background: #fff;
+    }
+    .todo-list li {
+      padding: 0 20px;
+      height: 50px;
+      line-height: 50px;
+      border-bottom: 1px solid #ccc;
+    }
+    .todo-list li .text-del{
+      text-decoration: line-through;
+      color: #ccc;
+    }
+    .todo-list li>input{
+      height: 30px;
+      width: 200px;
+    }
+    .todo-list li button{
+      float: right;
+      width: 60px;
+      height: 40px;
+      border-radius: 10px;
+      outline: none;
+      border: none;
+      background: #cc080b;
+      font-size: 18px;
+      color: #fff;
+      margin-top: 5px;
+    }
+    .hash-tab{
+      overflow: hidden;
+      width: 100%;
+      padding: 10px 0;
+      list-style: none;
+      background: #EFF3EF;
+      margin-top: 30px;
+    }
+    .hash-tab li{
+      cursor: pointer;
+      float: left;
+      margin-left: 40px;
+      font-size: 22px;
+      height: 60px;
+      line-height: 60px;
+    }
+    .hash-tab li a{
+      padding: 0 10px;
+      text-decoration: none;
+      color: #24ccc8;
+    }
+    .hash-tab li.current{
+      background: #15b3fb;
+      border-radius: 10px;
+    }
+    .hash-tab li.current a{
+      color: #fff;
+    }
+    .tips {
+      display: block;
+      margin-top: 20px;
+      width: 100%;
+      height: 50px;
+      line-height: 50px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      text-align: center;
+      background: #fff;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <header class="header">
+      <h1>TODO-LIST</h1>
+    </header>
+    <section class="content">
+      <h2>亲~ 你还有{{count}}件事要完成</h2>
+      <input type="text" class="inp"
+          v-model="todo" @keyup.13="add" v-aa>
+      <ul class="todo-list" v-if="todoAry.length !== 0">
+        <li v-for="(item, index) in todoAry" :key="index" @dblclick="show(item)">
+          <span :class="{'text-del': item.finished}"
+                v-show="!item.show">
+            <input type="checkbox" v-model="item.finished">
+            {{item.title}}
+          </span>
+          <input type="text"
+                v-show="item.show"
+                v-focus="item.show"
+                v-model="item.title"
+                @blur="item.show = false"
+                @keyup.13="item.show= false">
+          <button @click="remove(item)">删除</button>
+        </li>
+      </ul>
+      <span class="tips" v-else>{{ tips }}</span>
+      <ul class="hash-tab">
+        <!--用当前页面的路由跟对应A标签的href中的路由作比较-->
+        <li :class="{current: hash === 'all'}"><a href="#/all">全部任务</a></li>
+        <li :class="{current: hash === 'finished'}"><a href="#/finished">已完成</a></li>
+        <li :class="{current: hash === 'unfinished'}"><a href="#/unfinished">未完成</a></li>
+      </ul>
+    </section>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="index.js"></script>
+</body>
+
+</html>

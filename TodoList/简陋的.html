@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Vue 实现 todolist</title>
+</head>
+<body>
+  <div id="app">
+    <input type="text" v-model="value" @keyup.13="add">
+    <ul>
+      <li v-for="(list, index) in lists" :key="index">
+        {{list}}
+        <button @click="remove(index)">delete</button>
+      </li>
+    </ul>
+  </div>
+  
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+    let vm = new Vue({
+      el: '#app',
+      data: {
+        value: '',
+        lists: []
+      },
+      methods: {
+        add() {
+          this.value = this.value.trim();
+          if (!this.value) return;
+          this.lists.push(this.value);
+          this.value = '';
+        },
+        remove(index) {
+          this.lists.splice(index, 1);
+        }
+      }
+    })
+  </script>
+</body>
+</html>

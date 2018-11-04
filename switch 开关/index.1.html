@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>switch开关</title>
+  <style>
+    .switch {
+      position: relative;
+      /* 去除默认渲染 */
+      -webkit-appearance: none;
+      width: 102px;
+      height: 52px;
+      border: 1px solid #dfdfdf;
+      border-radius: 50px;
+      outline: none;
+      transition: all 0.2s linear;
+      overflow: hidden;
+    }
+    .switch::after {
+      content: '';
+      position: absolute;
+      width: 25px;
+      height: 50px;
+      transition: all 0.1s linear;
+      background: green;
+      z-index: -1;
+    }
+    .switch:checked:after {
+      width: 75px;
+    }
+    .switch:before {
+      content: '';
+      position: absolute;
+      left: 0;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      box-shadow: 0 0 2px 1px #dfdfdf;
+      background: #fff;
+      transition: all .1s linear;
+      z-index: 20;
+    }
+    .switch:checked:before {
+      left: 50px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    
+  </div>
+  <script>
+    //=> 1. 把字符串进行封装，但是字符串不能绑定事件
+    //=> 2. 把字符串变成 DOM 元素
+    class Switch {
+      constructor () {
+        this.state = {
+          turn: false
+        }
+      }
+      createDOM(str) {
+        let oDiv =  document.createElement('div');
+        oDiv.innerHTML = str;
+        return oDiv.firstElementChild
+      }
+      setState (newState) {
+        // this.state =  {...this.state, ...newState}
+        Object.assign(this.state, newState);
+        let oldEl = this.el;
+        let newEl = this.render(); // 渲染一个新的元素
+        oldEl.parentNode.replaceChild(newEl, oldEl); // 替换掉老的元素
+      }
+      change() {
+        this.setState({turn: !this.state.turn});
+      }
+      render () {
+        this.el = this.createDOM(`
+          <div>
+            <input type="checkbox" class="switch" ${this.state.turn ? 'checked' : ''}>
+            <p class="text">${this.state.turn ? '开' : '关'}</p>
+          </div>
+        `);
+        this.el.firstElementChild.addEventListener('change', this.change.bind(this))
+        return this.el;
+      }
+    }
+
+    let app = document.querySelector('.app');
+    app.appendChild(new Switch().render());
+    app.appendChild(new Switch().render());
+  </script>
+  <script>
+    
+  </script>
+</body>
+</html>

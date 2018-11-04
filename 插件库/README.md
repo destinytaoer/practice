@@ -18,6 +18,7 @@
 - 结合 DOM 库
 
 ## DOM
+- DOM：封装了类似 JQ 中的 DOM 操作方法
 
 ## 动画
 - animate0：简单的移动动画
@@ -29,3 +30,7 @@
 
 ## ajax
 - ajax：使用原生 JS 封装的 ajax 方法
+- ajax-promise：基于 Promise 封装的 ajax 方法
+
+## Promise
+- promise：使用原生 JS 手写的简易 Promise 类

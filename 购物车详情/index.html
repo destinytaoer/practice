@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Vue 购物车详情</title>
+  <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <style>
+    [v-cloak] {
+      display: none;
+    }
+    th {
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" v-cloak>
+    <table class="table text-center">
+      <thead>
+        <tr>
+          <th><input type="checkbox" v-model="checkAll">全选</th>
+          <th colspan="3">商品</th>
+          <th>单价</th>
+          <th>数量</th>
+          <th>小计</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(item, index) in lists">
+          <td><input type="checkbox" v-model="item.isSelect"></td>
+          <td>
+            <img :src="item.pic" alt="">
+          </td>
+          <td><p>{{item.title}}</p></td>
+          <td><p>{{item.desc}}</p></td>
+          <td>
+            {{item.price | toFixed(2)}}
+          </td>
+          <td><input type="text" v-model.trim="item.count" @input="change(item)"></td>
+          <td>{{item.count*item.price | toFixed(2)}}</td>
+          <td><button class="btn btn-danger" @click="remove(item)">删除</button></td>
+        </tr>
+      </tbody>
+      <tfoot class="text-right">
+        <tr>
+          <td colspan="8">
+            <button class="btn btn-danger" @click.stop.prevent="clearCart">清空购物车</button>
+          </td>
+        </tr>
+        <tr>
+          <td  colspan="8">
+            <h2>{{total | toFixed(2)}}</h2>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script>
+    let vm = new Vue({
+      el: '#app',
+      data: {
+        lists: []
+      },
+      created() {
+        this.getData();
+      },
+      methods: {
+        getData() {
+          axios.get('./data.json')
+            .then(res=>{
+              this.lists = res.data;
+            }).catch((error)=>{
+              console.log(error);
+            });
+        },
+        change(item) {
+          let n = item.count;
+          n = n.replace(/\D/g, '');
+          item.count = n;
+        },
+        remove(item2) {
+          //=> 使用 filter 进行删除
+          this.lists = this.lists.filter((item, index)=>{
+            return item2 !== item;
+          })
+        },
+        clearCart() {
+          this.lists = [];
+        }
+      },
+      computed: {
+        checkAll: {
+          get() {
+            if (this.lists.length === 0) return;
+            return this.lists.every(item=>{
+              return item.isSelect;
+            })
+          },
+          set(val) {
+            this.lists.forEach(item=>{
+              item.isSelect = val;
+            });
+          }
+        },
+        total() {
+          let total = 0;
+          this.lists.forEach(item=>{
+            total += item.price*item.count;
+          });
+          return total;
+        }
+      },
+      filters: {
+        toFixed(val, n=2) {
+          return '￥'+(val/100).toFixed(n);
+        }
+      }
+    })
+  </script>
+</body>
+</html>

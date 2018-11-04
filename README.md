@@ -21,6 +21,13 @@
 - 拖拽
 - 响应式
 - 省市区三级联动菜单
+- Vue 购物车详情
+- Vue TodoList
+- Vue Markdown 编辑
+- switch 开关（封装过程包含 render 和 createElement 原理）
+- React Search 百度搜索框
+- React Comment 留言板
+- slider React 轮播图
 
 # 插件库
 自己封装的一些常用插件、工具函数、组件等。
@@ -41,6 +48,7 @@
 - 结合 DOM 库
 
 ## DOM
+- DOM：封装了类似 JQ 中的 DOM 操作方法
 
 ## 动画
 - animate0：简单的移动动画
@@ -52,3 +60,7 @@
 
 ## ajax
 - ajax：使用原生 JS 封装的 ajax 方法
+- ajax-promise：基于 Promise 封装的 ajax 方法
+
+## Promise
+- promise：使用原生 JS 手写的简易 Promise 类

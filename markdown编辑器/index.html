@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Vue markdown编辑器</title>
+  <style>
+    html,
+    body,
+    #editor {
+      margin: 0;
+      height: 100%;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      color: #333;
+    }
+
+    textarea,
+    #editor div {
+      display: inline-block;
+      width: 49%;
+      height: 100%;
+      vertical-align: top;
+      box-sizing: border-box;
+      padding: 0 20px;
+    }
+
+    textarea {
+      border: none;
+      border-right: 1px solid #ccc;
+      resize: none;
+      outline: none;
+      background-color: #f6f6f6;
+      font-size: 14px;
+      font-family: 'Monaco', courier, monospace;
+      padding: 20px;
+    }
+
+    code {
+      color: #f66;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="editor">
+    <textarea :value="input" @input="update"></textarea>
+    <div v-html="compiledMarkdown"></div>
+  </div>
+  <script src="https://unpkg.com/marked@0.3.6"></script>
+  <script src="https://unpkg.com/lodash@4.16.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+    let vm = new Vue({
+      el: '#editor',
+      data: {
+        input: '# aa'
+      },
+      computed: {
+        compiledMarkdown() {
+          return marked(this.input, {
+            sanitize: true
+          });
+        }
+      },
+      methods: {
+        //=> 函数防抖，输入后多少时间才触发一次，没达到时间再次输入会重新计时
+        update: _.debounce(function (e) {
+          this.input = e.target.value;
+        })
+      }
+    })
+  </script>
+</body>
+
+</html>

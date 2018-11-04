@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>基于服务器时间的倒计时</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    .time {
+      margin: 20px auto;
+      width: 300px;
+      height: 50px;
+      line-height: 50px;
+      text-align: center;
+      border: 2px dashed lightblue;
+      font-size: 20px;
+    }
+
+    .time span {
+      color: lightcoral;
+      font-weight: 700;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="time">
+    距离抢购还剩：
+    <span>-- : -- : --</span>
+  </div>
+  <script>
+    let oTime = document.querySelector('.time'),
+      oTimeSpan = oTime.querySelector('span'),
+      autoTimer = null,
+      nowTime = null;
+
+    //=> 从服务器端获取时间
+    let queryTime = function queryTime() {
+      return new Promise(reslove => {
+        //=> 第一次向服务器发请求，把结果存储起来
+        let xhr = new XMLHttpRequest();
+        xhr.open('head', 'date.json');
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState === 2 && /^(2|3)\d{2}$/.test(xhr.status)) {
+            nowTime = new Date(xhr.getResponseHeader('date'));
+            reslove();
+          }
+        };
+        xhr.send(null);
+      });
+    }
+
+    // 计算时间
+    let computedTime = function computedTime() {
+      let tarTime = new Date('2018-09-21 22:00:00'),
+        diffTime = tarTime - nowTime;
+
+      if (diffTime >= 0) {
+        let hours = Math.floor(diffTime / 3600000);
+        diffTime = diffTime - hours * 3600000;
+        let minutes = Math.floor(diffTime / 60000);
+        diffTime = diffTime - minutes * 60000;
+        let seconds = Math.floor(diffTime / 1000);
+
+        hours < 10 ? hours = '0' + hours : null;
+        minutes < 10 ? minutes = '0' + minutes : null;
+        seconds < 10 ? seconds = '0' + seconds : null;
+
+        oTimeSpan.innerHTML = `${hours} : ${minutes} : ${seconds}`;
+        nowTime = new Date(nowTime.getTime() + 1000);
+        return;
+      }
+      oTimeSpan.innerHTML = '开始抢购！！';
+      clearInterval(autoTimer);
+    }
+    let promise = queryTime();
+    promise.then(computedTime);
+    autoTimer = setInterval(computedTime, 1000);
+  </script>
+</body>
+
+</html>

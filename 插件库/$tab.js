@@ -11,7 +11,7 @@
  *
  * by destiny on 2018-08-21
  */
-(function () {
+;(function () {
   function D_tab(opts) {
     let _DEFAULT = {
       eventType: 'click',

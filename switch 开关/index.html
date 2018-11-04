@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>switch开关</title>
+  <style>
+    .switch {
+      position: relative;
+      /* 去除默认渲染 */
+      -webkit-appearance: none;
+      width: 102px;
+      height: 52px;
+      border: 1px solid #dfdfdf;
+      border-radius: 50px;
+      outline: none;
+      background: linear-gradient(to right, green 0, green 0) no-repeat;
+      background-size: 25px 50px;
+      transition: all 0.1s linear;
+      /* overflow: hidden; */
+    }
+    .switch:checked {
+      background-size: 75px 50px;
+    }
+    .switch:before {
+      content: '';
+      position: absolute;
+      left: 0;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      box-shadow: 0 0 2px 1px #dfdfdf;
+      background: #fff;
+      transition: all .1s linear;
+      z-index: 20;
+    }
+    .switch:checked:before {
+      left: 50px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <input type="checkbox" class="switch">
+    <p class="text">关</p>
+  </div>
+  <script>
+    let btn = document.querySelector('.switch'),
+    text = document.querySelector('.text');
+    btn.addEventListener('change', function (e) {
+      text.innerHTML = e.target.checked ? '开' : '关';
+    })
+  </script>
+</body>
+</html>

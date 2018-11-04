@@ -14,7 +14,7 @@
  *
  * by destiny on 2018-08-09
  */
-(function() {
+;(function() {
   function PreLoad(imgs, options) {
     this.imgs = imgs;
     this.opts = $.extend({}, PreLoad.DEFAULTS, options);
