@@ -44,6 +44,27 @@ function insertionSort(arr) {
 }
 
 /* 希尔排序 */
+let gaps = [5, 3, 1];
+
+function shellSort(arr) {
+  let g, i, j, temp;
+  // 外层对间隔序列进行遍历
+  // 也就是说，第一轮使用间隔 5，第二轮使用间隔 3，第三轮使用间隔 1
+  for (g = 0; g < gaps.length; g++) {
+    // i 从间隔数开始，后面所有的数都要与对应前面一定间隔的数进行比较
+    for (i = gaps[g]; i < arr.length; i++) {
+      temp = arr[i];// 保存当前的数
+      
+      // 把前面一定间隔的数中，比它大的都往后挪，直到找到比它小的为止
+      // 注意这个 j 必须大于等于 gaps[g]，原因在于， j 表示的是当前位置，而它比较的是前一个位置的值，如果 j 小于间隔，那么前面的位置就没有值了
+      for (j = i; j >= gaps[g] && arr[j - gas[g]] > temp; j -= gaps[g]) {
+
+      }
+      arr[j] = temp;
+    }
+  }
+}
+
 
 /* 归并排序 */
 function merge(arr, lStart, lStop, rStart, rStop) {

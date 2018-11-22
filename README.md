@@ -70,5 +70,14 @@
 
 ## 算法代码
 - sort：经典排序算法
+- Arr：数组作为存储结构的简单使用
+- List：顺序表结构
+- LinkedList：链表结构
+- Stack：栈结构
+- Queue：队列结构
+- Set：集合结构
+- Dictionary：字典结构
+- HashTable：哈希表
+- BinaryTree：二叉树
 
 ## d3 
