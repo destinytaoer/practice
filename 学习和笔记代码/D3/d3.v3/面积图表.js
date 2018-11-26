@@ -1,3 +1,4 @@
+// 面积图表是在曲线图表的基础上，增加了曲线到 x 轴之间的面积阴影
 var width = 500,
   height = 200,
   margin = { left: 50, top: 30, right: 20, bottom: 20 },
@@ -25,15 +26,17 @@ var scale_y = d3.scale.linear()
   .domain([0, d3.max(data)])
   .range([g_height, 0])
 
-// 通过 d3.svg 的 line 方法来生成 line_generator 函数
-var line_generator = d3.svg.line()
+// 通过 d3.svg 的 area 方法来生成 area_generator 函数
+var area_generator = d3.svg.area()
   .x(function(d, i) {return scale_x(i)}) // 生成 x 坐标值
-  .y(function (d, i) { return scale_y(d) }) // 生成 y 坐标值
+  .y0(g_height) // 是实际上的 x 轴
+  .y1(function (d, i) { return scale_y(d) }) // 生成 y 坐标值
   .interpolate('cardinal') // 指定一个折线的拟合方式，使它变成曲线
 
 // path 元素中 d（表示 data） 属性的值，M 表示七点坐标，L 表示下一个点的坐标
 g.append('path')
-  .attr('d', line_generator(data)) //通过 line_generator 来生成 "M1,0L20,40L40,50L50,100"
+  .attr('d', area_generator(data)) //通过 area_generator(data) 来生成 "M1,0L20,40L40,50L50,100"
+  .style('fill', '#469284')
 
 // 定义坐标轴
 var x_axis = d3.svg.axis().scale(scale_x),
