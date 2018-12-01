@@ -50,4 +50,3 @@ bar.append('text')
 // text-anchor: start（右） middle end（左）
 // dominant-baseline: baseline（上） middle hanging（下）
 // 三种状态相对应，都是相当于文本的水平或垂直基线来定位
-
