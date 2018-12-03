@@ -67,9 +67,11 @@ bar.append('text')
 
 // 坐标轴
 
-let y_axis = d3.axisLeft().scale(scale_y)
-let x_axis = d3.axisBottom().scale(scale_x)
+let y_axis = d3.axisLeft(scale_y)
+let x_axis = d3.axisBottom(scale_x)
 
 g.append('g').call(y_axis)
 g.append('g').call(x_axis)
   .attr('transform', 'translate(0,' + height + ')')
+
+console.log(d3.range(49));

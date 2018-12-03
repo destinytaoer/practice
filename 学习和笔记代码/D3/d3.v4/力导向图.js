@@ -1,43 +1,93 @@
-var nodes = [{
-    name: "桂林"
-  }, {
-    name: "广州"
+var nodes = [ //节点集
+  {
+    name: "湖南邵阳"
   },
   {
-    name: "厦门"
-  }, {
-    name: "杭州"
+    name: "山东莱州"
   },
   {
-    name: "上海"
-  }, {
-    name: "青岛"
+    name: "广东阳江"
   },
   {
-    name: "天津"
+    name: "山东枣庄"
+  },
+  {
+    name: "泽"
+  },
+  {
+    name: "恒"
+  },
+  {
+    name: "鑫"
+  },
+  {
+    name: "明山"
+  },
+  {
+    name: "班长"
   }
 ];
 
-var edges = [{
-    source: 0,
-    target: 1
-  }, {
-    source: 0,
-    target: 2
-  },
+var edges = [ //边集
   {
     source: 0,
-    target: 3
-  }, {
-    source: 1,
-    target: 4
+    target: 4,
+    relation: "籍贯",
+    value: 1.3
+  },
+  {
+    source: 4,
+    target: 5,
+    relation: "舍友",
+    value: 1
+  },
+  {
+    source: 4,
+    target: 6,
+    relation: "舍友",
+    value: 1
+  },
+  {
+    source: 4,
+    target: 7,
+    relation: "舍友",
+    value: 1
   },
   {
     source: 1,
-    target: 5
-  }, {
-    source: 1,
-    target: 6
+    target: 6,
+    relation: "籍贯",
+    value: 2
+  },
+  {
+    source: 2,
+    target: 5,
+    relation: "籍贯",
+    value: 0.9
+  },
+  {
+    source: 3,
+    target: 7,
+    relation: "籍贯",
+    value: 1
+  },
+  {
+    source: 5,
+    target: 6,
+    relation: "同学",
+    value: 1.6
+  },
+  {
+    source: 6,
+    target: 7,
+    relation: "朋友",
+    value: 0.7
+  },
+  {
+    source: 6,
+    target: 8,
+    relation: "职责",
+    value: 2
   }
 ];
 
@@ -46,9 +96,12 @@ var width = 600,
 
 // 力数据转换
 let force = d3.forceSimulation(nodes)
-  .force('link', d3.forceLink(edges).distance(200))
   .force("charge", d3.forceManyBody())
+  .force('link', d3.forceLink(edges).distance(function (d) { //每一边的长度
+    return d.value * 150;
+  }).strength(1))
   .force("center", d3.forceCenter(width / 2, height / 2))
+  .on('tick', ticked)
 
 
 let svg = d3.select('#container')
@@ -56,38 +109,94 @@ let svg = d3.select('#container')
   .attr('width', width)
   .attr('height', height)
 
-let chart = svg.append('g')
-
-let chart_edges = chart.append('g').selectAll('line')
+// 添加边
+let chart_edges = svg.append('g').selectAll('line')
   .data(edges)
   .enter()
   .append('line')
   .style("stroke", "steelblue")
   .style("stroke-width", 1)
 
+
+var linksText = svg.append("g")
+  .selectAll("text")
+  .data(edges)
+  .enter()
+  .append("text")
+  .text(function (d) {
+    return d.relation;
+  })
+  .style("stroke", "steelblue")
+  .style("stroke-width", 1)
+
 let color = d3.schemeCategory10
 
-let chart_nodes = chart.append('g').selectAll("circle")
+// 添加顶点分组，包含顶点和文字，在这里添加拖拽
+let g_nodes = svg.selectAll('g.nodes')
   .data(nodes)
   .enter()
-  .append("circle")
-  .attr("r", 20)
+  .append('g')
+  .attr('class', 'nodes')
+  .attr('transform', function (d) {
+    return 'translate(' + d.x + ',' + d.y + ')'
+  }) // 让分组元素跟随顶点移动
   .call(d3.drag()
     .on("start", dragstarted)
     .on("drag", dragged)
     .on("end", dragended))
+
+// 添加顶点
+let chart_nodes = g_nodes.append("circle")
+  .attr("r", 20)
   .style("fill", function (d, i) {
     return color[i]
   })
 
+//添加描述节点的文字
+let chart_texts = g_nodes.append("text")
+  .text(function (d) {
+    return d.name;
+  })
+  .style("fill", "black")
+  .style('text-anchor', 'middle')
+  .style('dominant-baseline', 'middle')
+
+// 添加箭头
+//添加defs标签  
+var defs = svg.append("defs");  
+//添加marker标签及其属性  
+var arrowMarker = defs.append("marker")  
+    .attr("id","arrow")  
+    .attr("markerUnits","strokeWidth")  
+    .attr("markerWidth",12)  
+    .attr("markerHeight",12)  
+    .attr("viewBox","0 0 12 12")  
+    .attr("refX", 20)  
+    .attr("refY", 6)  
+    .attr("orient", "auto")
+
+//绘制直线箭头  
+var arrow_path = "M2,2 L10,6 L2,10 L6,6 L2,2";  
+arrowMarker.append("path")  
+    .attr("d",arrow_path)  
+    .attr("fill","red")
+
+// d.fx 和 d.fy 表示固定坐标
+// 拖拽开始的时候，让节点固定位置为当前节点位置
+// 在拖动节点的时候，鼠标位置在哪里，节点的固定位置就在哪里，
+// 结束拖动的时候触发，固定坐标都为空，也就是不固定，让其跟着仿真做衰减
+
 function dragstarted(d) {
-  // if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+  if (!d3.event.active) force.alphaTarget(0.3).restart();
+  // 设置衰减系数，重启仿真。数值越大，移动的越快
   d.fx = d.x;
   d.fy = d.y;
 }
 
+
 function dragended(d) {
-  // if (!d3.event.active) simulation.alphaTarget(0);
+  if (!d3.event.active) force.alphaTarget(0);
+  // 阻止仿真继续计算位置
   d.fx = null;
   d.fy = null;
 }
@@ -97,20 +206,8 @@ function dragged(d) {
   d.fy = d3.event.y;
 }
 
-//添加描述节点的文字
-let chart_texts = chart.append('g').selectAll("text")
-  .data(nodes)
-  .enter()
-  .append("text")
-  .text(function (d) {
-    return d.name;
-  })
-  .style("fill", "black")
-  .style('text-anchor', 'middle')
-  .style('dominant-baseline', 'middle')
-
-
-force.on("tick", function () { //对于每一个时间间隔
+function ticked() {
+  //对于每一个时间间隔
   //更新连线坐标
   chart_edges
     .attr("x1", function (d) {
@@ -125,22 +222,19 @@ force.on("tick", function () { //对于每一个时间间隔
     .attr("y2", function (d) {
       return d.target.y;
     })
-
-  //更新节点坐标
-  chart_nodes
-    .attr("cx", function (d) {
-      return d.x;
-    })
-    .attr("cy", function (d) {
-      return d.y;
-    });
-
-  //更新文字坐标
-  chart_texts
+  
+  // 更新边文字坐标
+  linksText
     .attr("x", function (d) {
-      return d.x;
+      return (d.source.x + d.target.x) / 2;
     })
     .attr("y", function (d) {
-      return d.y;
-    });
-});
+      return (d.source.y + d.target.y) / 2;
+    })
+
+  //更新顶点分组坐标
+  g_nodes
+    .attr("transform", function (d) {
+      return 'translate(' + d.x + ',' + d.y + ')'
+    })
+}
