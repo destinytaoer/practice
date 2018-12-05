@@ -109,8 +109,10 @@ let svg = d3.select('#container')
   .attr('width', width)
   .attr('height', height)
 
+let chart = svg.append('g')
+
 // 添加边
-let chart_edges = svg.append('g').selectAll('line')
+let chart_edges = chart.append('g').selectAll('line')
   .data(edges)
   .enter()
   .append('line')
@@ -118,7 +120,7 @@ let chart_edges = svg.append('g').selectAll('line')
   .style("stroke-width", 1)
 
 
-var linksText = svg.append("g")
+var linksText = chart.append("g")
   .selectAll("text")
   .data(edges)
   .enter()
@@ -132,7 +134,7 @@ var linksText = svg.append("g")
 let color = d3.schemeCategory10
 
 // 添加顶点分组，包含顶点和文字，在这里添加拖拽
-let g_nodes = svg.selectAll('g.nodes')
+let g_nodes = chart.selectAll('g.nodes')
   .data(nodes)
   .enter()
   .append('g')
@@ -161,25 +163,22 @@ let chart_texts = g_nodes.append("text")
   .style('text-anchor', 'middle')
   .style('dominant-baseline', 'middle')
 
-// 添加箭头
-//添加defs标签  
-var defs = svg.append("defs");  
-//添加marker标签及其属性  
-var arrowMarker = defs.append("marker")  
-    .attr("id","arrow")  
-    .attr("markerUnits","strokeWidth")  
-    .attr("markerWidth",12)  
-    .attr("markerHeight",12)  
-    .attr("viewBox","0 0 12 12")  
-    .attr("refX", 20)  
-    .attr("refY", 6)  
-    .attr("orient", "auto")
-
-//绘制直线箭头  
-var arrow_path = "M2,2 L10,6 L2,10 L6,6 L2,2";  
-arrowMarker.append("path")  
-    .attr("d",arrow_path)  
-    .attr("fill","red")
+// 定义箭头
+var defs = chart.append("defs")
+//添加 marker 标签及其属性  
+var arrowMarker = defs.append("marker")
+  .attr("id", "arrow") // 供后面使用的 id 标识
+  .attr("markerUnits", "strokeWidth")
+  .attr("markerWidth", 12) // 箭头大小
+  .attr("markerHeight", 12)
+  .attr("viewBox", "0 0 12 12") // 坐标系的区域
+  .attr("refX", 30) // 相对于直线路径的坐标位置
+  .attr("refY", 6) // 中心由下面箭头的路径决定
+  .attr("orient", "auto") // 箭头方向
+  .append("path") //绘制直线箭头路径 
+  .attr("d", "M2,2 L10,6 L2,10 L6,6 L2,2")
+  .style('fill','red') //箭头颜色
+  .style('stroke', 'red')
 
 // d.fx 和 d.fy 表示固定坐标
 // 拖拽开始的时候，让节点固定位置为当前节点位置
@@ -206,6 +205,12 @@ function dragged(d) {
   d.fy = d3.event.y;
 }
 
+// 缩放
+svg.call(d3.zoom().scaleExtent([0.05, 8]).on('zoom', () => {
+  // 保存当前缩放的属性值
+  chart.attr('transform', d3.event.transform);
+}).on('dblclick.zoom', null));
+
 function ticked() {
   //对于每一个时间间隔
   //更新连线坐标
@@ -222,7 +227,8 @@ function ticked() {
     .attr("y2", function (d) {
       return d.target.y;
     })
-  
+    .attr('marker-end', 'url(#arrow)')
+
   // 更新边文字坐标
   linksText
     .attr("x", function (d) {
