@@ -103,26 +103,26 @@ let force = d3.forceSimulation(nodes)
   .force("center", d3.forceCenter(width / 2, height / 2))
   .on('tick', ticked)
 
+console.log(nodes, edges);
+
 
 let svg = d3.select('#container')
   .append('svg')
   .attr('width', width)
   .attr('height', height)
 
-// 添加边
-let chart_edges = svg.append('g').selectAll('line')
+let g_edges = svg.selectAll('g.edges')
   .data(edges)
   .enter()
-  .append('line')
+  .append('g')
+
+// 添加边
+let chart_edges = g_edges.append('line')
   .style("stroke", "steelblue")
   .style("stroke-width", 1)
 
 
-var linksText = svg.append("g")
-  .selectAll("text")
-  .data(edges)
-  .enter()
-  .append("text")
+var linksText = g_edges.append("text")
   .text(function (d) {
     return d.relation;
   })

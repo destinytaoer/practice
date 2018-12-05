@@ -1,5 +1,6 @@
-;
+; // 基于 d3.v4 实现的 JQ 插件
 (function ($) {
+  // 定义默认值
   var _default = {
     r: 20,
     width: 716,
@@ -7,41 +8,37 @@
     distance: 250
   }
 
+  // 封装成一个类，方便复用即维护
   var Force = function (ele, options) {
+    // 将传入的 svg 容器、相关配置 挂载到实例上
     this.options = options;
     this.ele = ele;
-    this.$svg = $(ele);
+    this.$svg = $(ele); // 转换为 JQ 元素，方便以后使用 JQ 中的方法
 
+    // 移除 svg 容器中可能存在的 svg 元素？
     d3.select(ele).selectAll('svg').remove();
-    this.svg0 = d3.select(ele);
+
+    this.svg0 = d3.select(ele); // 转换为 d3 的 selection
+
+    // 获取 svg 元素的宽高，并挂载到实例上
     this.width = +this.svg0.attr("width");
     this.height = +this.svg0.attr("height");
+
+    // 建立一个分组，基于这个分组元素画图
     this.svg = this.svg0.append('g')
       .attr('width', this.width)
       .attr('height', this.height)
-      .classed('force', true);
+      .classed('force', true); // 增加类名
+    
+    // 挂载所需数据
     this.vertexes = options.data.vertexes;
     this.edges = options.data.edges;
+    // 定义边类型
     this.edgeTypes = ['invest', 'officer', 'guarantee', 'guarantee_circle'];
   }
 
-  Force.prototype.preprocessData = function () {
-    this.edges.forEach(function (e) {
-      // e.source = e._from
-      // e.target = e._to
-      e.source = e._to
-      e.target = e._from
-      e._type = e._type || (e._id.indexOf('/') > -1 && e._id.split('/')[0].toLowerCase())
-    })
-    this.vertexes.forEach(function (v) {
-      v._type = v._type || (v._id.indexOf('/') > -1 && v._id.split('/')[0].toLowerCase())
-    })
-
-    this.setIndex()
-
-    return this
-  }
-
+  // 初始化图表结构
+  // { g: { g.chart-layer: [ g.links, g.nodes ] } }
   Force.prototype.initChartLayers = function () {
     this.svg.append('g')
       .attr('class', 'chart-layer')
@@ -54,6 +51,72 @@
     return this
   }
 
+  // 预处理数据，将数据转化为 d3.forceSimulation 可以处理的数据
+  Force.prototype.preprocessData = function () {
+    this.edges.forEach(function (e) {
+      // e.source = e._from
+      // e.target = e._to
+
+      // 边需要 target 和 source 两个必须的字段
+      e.source = e._to
+      e.target = e._from
+
+      // 其他数据的处理
+      e._type = e._type || (e._id.indexOf('/') > -1 && e._id.split('/')[0].toLowerCase())
+    })
+
+    // 顶点数据的处理
+    this.vertexes.forEach(function (v) {
+      v._type = v._type || (v._id.indexOf('/') > -1 && v._id.split('/')[0].toLowerCase())
+    })
+
+    this.setIndex()
+
+    return this // 实现链式调用
+  }
+
+  /**
+   * 计算起点和终点相同边的条数，并加到 link 属性里
+   * 计算每个点的度，并加到 vertex 的 degree 属性中
+   * @return {Object} this this
+   */
+  Force.prototype.setIndex = function () {
+    var linkNumMap = {}
+    var nodeNumMap = {}
+    var linkDirection = {}
+    this.edges.forEach(function (edge) {
+      if (linkNumMap[edge._from + edge._to] === undefined) {
+        linkNumMap[edge._from + edge._to] = linkNumMap[edge._to + edge._from] = 1
+        // 记录边的起点，方便后面得到文字的方向
+        linkDirection[edge._from + edge._to] = linkDirection[edge._to + edge._from] = edge._from
+      } else {
+        linkNumMap[edge._from + edge._to]++
+        linkNumMap[edge._to + edge._from]++
+      }
+
+      // 每个顶点的出现次数
+      nodeNumMap[edge._from] = nodeNumMap[edge._from] ? nodeNumMap[edge._from] + 1 : 1
+      nodeNumMap[edge._to] = nodeNumMap[edge._to] ? nodeNumMap[edge._to] + 1 : 1
+
+      // 在相同终点和起点的边中的索引，从 1 开始
+      // 所以放到这里
+      edge.linkIndex = linkNumMap[edge._from + edge._to]
+    })
+    this.edges.forEach(function (edge) {
+      // 在每条边上记录与其相同终点和起点的边的数量
+      edge.linkNum = linkNumMap[edge._from + edge._to]
+      // 边上文字的方向
+      edge.labelDirection = linkDirection[edge._from + edge._to] === edge._from ? 1 : 0
+    })
+    this.vertexes.forEach(function (vertex) {
+      // 记录顶点在边中出现的次数，专业称呼叫度，包含入度和出度
+      vertex.degree = nodeNumMap[vertex._id]
+    })
+
+    return this
+  }
+
+  // 画图
   Force.prototype.render = function () {
     /**
      * 定义箭头
@@ -389,39 +452,7 @@
     return this
   }
 
-  /**
-   * 计算起点和终点相同边的条数，并加到link属性里
-   * 计算每个点的度，并加到 vertex 的 degree 属性中
-   * @return {Object} this this
-   */
-  Force.prototype.setIndex = function () {
-    var linkNumMap = {}
-    var nodeNumMap = {}
-    var linkDirection = {}
-    this.edges.forEach(function (edge) {
-      if (linkNumMap[edge._from + edge._to] === undefined) {
-        linkNumMap[edge._from + edge._to] = linkNumMap[edge._to + edge._from] = 1
-        linkDirection[edge._from + edge._to] = linkDirection[edge._to + edge._from] = edge._from
-      } else {
-        linkNumMap[edge._from + edge._to]++
-          linkNumMap[edge._to + edge._from]++
-      }
-
-      nodeNumMap[edge._from] = nodeNumMap[edge._from] ? nodeNumMap[edge._from] + 1 : 1
-      nodeNumMap[edge._to] = nodeNumMap[edge._to] ? nodeNumMap[edge._to] + 1 : 1
-      edge.linkIndex = linkNumMap[edge._from + edge._to]
-    })
-    this.edges.forEach(function (edge) {
-      edge.linkNum = linkNumMap[edge._from + edge._to]
-      edge.labelDirection = linkDirection[edge._from + edge._to] === edge._from ? 1 : 0
-    })
-    this.vertexes.forEach(function (vertex) {
-      vertex.degree = nodeNumMap[vertex._id]
-    })
-
-    return this
-  }
-
+  // 绑定事件：拖拽、缩放
   Force.prototype.bind = function () {
     /**
      * dragStart 开始拖拽
@@ -481,6 +512,7 @@
     return this
   }
 
+  // 初始化位置
   Force.prototype.initPosition = function (config) {
     config = $.extend({}, {
       x: 0,
@@ -493,6 +525,7 @@
     return this;
   }
 
+  // 整个图的初始化，整理方法的执行逻辑顺序
   Force.prototype.init = function () {
     this.preprocessData()
       .initChartLayers()
@@ -500,7 +533,9 @@
       .bind()
   }
 
+  // 挂载到 JQ 的 prototype 中
   $.fn.forceGraph = function (options) {
+    // 合并默认配置与传入的配置
     options = $.extend({}, _default, options)
     if (!options.data || !(options.data.vertexes || options.data.edges)) return
     var force = new Force(this[0], options)
