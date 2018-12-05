@@ -124,14 +124,13 @@ let g_edges = chart.selectAll('g.edges')
 let chart_edges = g_edges.append('line')
   .style("stroke", "steelblue")
   .style("stroke-width", 1)
+  .attr('marker-end', 'url(#arrow)')
 
-
-var linksText = g_edges.append("text")
+var edge_texts = g_edges.append("text")
   .text(function (d) {
     return d.relation;
   })
-  .style("stroke", "steelblue")
-  .style("stroke-width", 1)
+  .style("fill", "#eee")
 
 let color = d3.schemeCategory10
 
@@ -157,7 +156,7 @@ let chart_nodes = g_nodes.append("circle")
   })
 
 //添加描述节点的文字
-let chart_texts = g_nodes.append("text")
+let node_texts = g_nodes.append("text")
   .text(function (d) {
     return d.name;
   })
@@ -180,7 +179,6 @@ var arrowMarker = defs.append("marker")
   .append("path") //绘制直线箭头路径 
   .attr("d", "M2,2 L10,6 L2,10 L6,6 L2,2")
   .style('fill','red') //箭头颜色
-  .style('stroke', 'red')
 
 // d.fx 和 d.fy 表示固定坐标
 // 拖拽开始的时候，让节点固定位置为当前节点位置
@@ -229,10 +227,9 @@ function ticked() {
     .attr("y2", function (d) {
       return d.target.y;
     })
-    .attr('marker-end', 'url(#arrow)')
 
   // 更新边文字坐标
-  linksText
+  edge_texts
     .attr("x", function (d) {
       return (d.source.x + d.target.x) / 2;
     })
