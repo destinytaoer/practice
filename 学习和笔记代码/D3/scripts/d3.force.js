@@ -18,18 +18,18 @@
     // 移除 svg 容器中可能存在的 svg 元素？
     d3.select(ele).selectAll('svg').remove();
 
-    this.svg0 = d3.select(ele); // 转换为 d3 的 selection
+    this.svg = d3.select(ele); // 转换为 d3 的 selection
 
     // 获取 svg 元素的宽高，并挂载到实例上
-    this.width = +this.svg0.attr("width");
-    this.height = +this.svg0.attr("height");
+    this.width = +this.svg.attr("width");
+    this.height = +this.svg.attr("height");
 
     // 建立一个分组，基于这个分组元素画图
-    this.svg = this.svg0.append('g')
+    this.chart = this.svg.append('g')
       .attr('width', this.width)
       .attr('height', this.height)
       .classed('force', true); // 增加类名
-    
+
     // 挂载所需数据
     this.vertexes = options.data.vertexes;
     this.edges = options.data.edges;
@@ -40,13 +40,14 @@
   // 初始化图表结构
   // { g: { g.chart-layer: [ g.links, g.nodes ] } }
   Force.prototype.initChartLayers = function () {
-    this.svg.append('g')
+    this.chart.append('g')
       .attr('class', 'chart-layer')
       .append('g')
       .attr('class', 'links')
-    this.svg.select('.chart-layer')
+    this.chart.select('.chart-layer')
       .append('g')
       .attr('class', 'nodes')
+    this.chart.append('defs')
 
     return this
   }
@@ -84,6 +85,7 @@
     var linkNumMap = {}
     var nodeNumMap = {}
     var linkDirection = {}
+
     this.edges.forEach(function (edge) {
       if (linkNumMap[edge._from + edge._to] === undefined) {
         linkNumMap[edge._from + edge._to] = linkNumMap[edge._to + edge._from] = 1
@@ -120,15 +122,15 @@
   Force.prototype.render = function () {
     /**
      * 定义箭头
-     * @param {Object} svg 要添加进的 svg
+     * @param {Object} chart 要添加进的 chart
      * @param {String} id 箭头 id
      * @param {Number} refX refX 位置
      * @param {String} pathDescr path d 元素
      * @param {String} className 箭头 class
      */
-    function defineArrow(svg, id, refX, pathDescr, className) {
+    function defineArrow(chart, id, refX, pathDescr, className) {
       className = className || '';
-      svg.append('defs')
+      chart.select('defs')
         .append('marker')
         .attr('id', id)
         .attr('class', 'arrow-marker ' + className)
@@ -149,26 +151,34 @@
     /** 动态调整位置 */
     function tickActions() {
       // 移动 vertex 位置
-      _this.svg.selectAll('g.node')
+      _this.chart.selectAll('g.node')
         .attr('transform', function (d) {
           return 'translate(' + d.x + ',' + d.y + ')'
         })
 
-      // 调整label和边的距离
-      _this.svg.selectAll('g .link-name').each(function (d, i, g) {
+      // 调整label和边的距离，为啥要调整？
+      _this.chart.selectAll('g .link-name').each(function (d, i, g) {
+        // 勾股定理计算出线长度
         var r = Math.sqrt(Math.pow(d.source.x - d.target.x, 2) + Math.pow(d.source.y - d.target.y, 2))
+
+        // 垂直距离小于长度的一半时，拉开 5 px？以 45 度基准来理解
         if (Math.abs(d.source.y - d.target.y) < r / 2) {
           d3.select(g[i]).attr('transform', 'translate(0, -5)')
-        } else if ((d.source.x > d.target.x && d.source.y > d.target.y) ||
+        }
+        // 源在右下，目标在左上，往源方向移动 5 px
+        else if ((d.source.x > d.target.x && d.source.y > d.target.y) ||
           (d.source.x < d.target.x && d.source.y < d.target.y)) {
           d3.select(g[i]).attr('transform', 'translate(5, 0)')
-        } else if ((d.source.x > d.target.x && d.source.y < d.target.y) ||
+        }
+        // 源在右上，目标在左下，往目标方向移动 5 px
+        else if ((d.source.x > d.target.x && d.source.y < d.target.y) ||
           (d.source.x < d.target.x && d.source.y > d.target.y)) {
           d3.select(g[i]).attr('transform', 'translate(-5, 0)')
         }
       })
 
-      _this.svg.selectAll('g .link-name textPath').each(function (d, i, g) {
+      // 当源和目标位置被移动到交换相对（左右）位置时，将文字换到另一边。更改文字路径
+      _this.chart.selectAll('g .link-name textPath').each(function (d, i, g) {
         // 通过旋转 label, 使文字始终处于 edge 上方
         if (d.source.x > d.target.x) {
           d3.select(g[i]).attr('xlink:href', function (d) {
@@ -198,7 +208,7 @@
       }
 
       // 计算 edge 的 path, 多条路径时计算弧度
-      _this.svg.selectAll('.edge-path').each(function (d, i, g) {
+      _this.chart.selectAll('.edge-path').each(function (d, i, g) {
         var dx = d.target.x - d.source.x
         var dy = d.target.y - d.source.y
 
@@ -273,20 +283,20 @@
      * @param {Object} d vertex
      * @return {Object} svg image file
      */
-    // function setNodeIcon(d) {
-    //   var type = d._type || d.entity_type || (d._id.includes('/') && d._id.split('/')[0]) || 'Company'
+    function setNodeIcon(d) {
+      var type = d._type || d.entity_type || (d._id.includes('/') && d._id.split('/')[0]) || 'Company'
 
-    //   return '/static/imgs/static/' + type + '.svg'
-    // }
+      return '/static/imgs/static/' + type + '.svg'
+    }
 
     var _this = this
     // define arrow
     this.edgeTypes.forEach(function (e) {
       //M0,0 L10,5 L0,10 L2,5 z
       // M10,0 L2,5 L10,10 L8,5 z
-      defineArrow(_this.svg, 'arrow_' + e, _this.options.r + 9, 'M10,0 L2,5 L10,10 L8,5 z', e)
+      defineArrow(_this.chart, 'arrow_' + e, _this.options.r + 9, 'M10,0 L2,5 L10,10 L8,5 z', e)
     })
-    defineArrow(this.svg, 'arrow', this.options.r + 9, 'M10,0 L2,5 L10,10 L8,5 z')
+    defineArrow(this.chart, 'arrow', this.options.r + 9, 'M10,0 L2,5 L10,10 L8,5 z')
 
     // setup
     var linkForce = d3.forceLink(this.edges)
@@ -307,7 +317,7 @@
       .on('tick', tickActions)
 
     // add vertexes
-    var nodeEnter = this.svg.select('.nodes').selectAll('g')
+    var nodeEnter = this.chart.select('.nodes').selectAll('g')
       .data(this.vertexes)
       .enter()
       .append('g')
@@ -366,13 +376,13 @@
         g.selectAll('rect')
           .attr('width', w)
           .attr('height', w)
-          g.selectAll('.blacklist').append('title').append('tspan').text(function(d){
-            if(d.blacklist_cause){
+        g.selectAll('.blacklist').append('title').append('tspan').text(function (d) {
+          if (d.blacklist_cause) {
             return d.blacklist_cause
-            }else{
-              return ''
-            }
-          })
+          } else {
+            return ''
+          }
+        })
 
         var nodeBBox = node.node().getBBox();
         var xShift = nodeBBox.width / 2 + g.node().getBBox().width + 5
@@ -386,7 +396,7 @@
       })
 
     // add edges
-    var linkEnter = this.svg.select('.links').selectAll('g')
+    var linkEnter = this.chart.select('.links').selectAll('g')
       .data(this.edges)
       .enter()
       .append('g')
@@ -420,7 +430,7 @@
         }
       })
     // 增加反向路径, 用于旋转 label
-    this.svg.select('defs').selectAll('.reverse-path')
+    this.chart.select('defs').selectAll('.reverse-path')
       .data(this.edges)
       .enter()
       .append('path')
@@ -454,6 +464,8 @@
 
   // 绑定事件：拖拽、缩放
   Force.prototype.bind = function () {
+    var _this = this
+
     /**
      * dragStart 开始拖拽
      * @param  {Object} d vertex
@@ -483,31 +495,33 @@
       d.fy = null
     }
 
-    /** 缩放 */
-    function zoom() {
-      d3.select('g.chart-layer').attr('transform', d3GraphUtil.transform2Str(d3.event.transform))
-    }
-
-    var _this = this
-
-    // 注册缩放事件
-    this.zoomListener = d3.zoom().scaleExtent([0.1, 5]).on('zoom', zoom)
-    // 缩放配置
-    this.svg0.call(this.zoomListener)
-    // 清空缩放事件
-    var t = d3.zoomIdentity.translate(0, 0).scale(1)
-    this.svg0.call(this.zoomListener.transform, t)
-    this.$svg.on('init-graph-position', function (e, config) {
-      _this.initPosition(config);
-    })
-
     // 拖拽配置
     var dragHandler = d3.drag()
       .on('start', dragStart)
       .on('drag', drag)
       .on('end', dragEnd)
 
-    dragHandler(this.svg.selectAll('.node'))
+    dragHandler(this.chart.selectAll('.node'))
+
+    /** 缩放 */
+    function zoom() {
+      d3.select('g.chart-layer').attr('transform', d3GraphUtil.transform2Str(d3.event.transform))
+    }
+
+    // 注册缩放事件
+    this.zoomListener = d3.zoom().scaleExtent([0.1, 5]).on('zoom', zoom)
+    // 缩放配置
+    this.svg.call(this.zoomListener)
+
+    // 初始不平移也不缩放
+    var t = d3.zoomIdentity.translate(0, 0).scale(1)
+    // 为选择器指定其 transform
+    this.svg.call(this.zoomListener.transform, t)
+
+    // 绑定 JQ 自定义事件来改变位置
+    this.$svg.on('init-graph-position', function (e, config) {
+      _this.initPosition(config);
+    })
 
     return this
   }
@@ -520,7 +534,7 @@
       scale: 1
     }, config)
     var t = d3.zoomIdentity.translate(config.x, config.y).scale(config.scale);
-    this.svg0.call(this.zoomListener.transform, t);
+    this.svg.call(this.zoomListener.transform, t);
 
     return this;
   }

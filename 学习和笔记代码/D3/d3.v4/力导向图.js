@@ -206,10 +206,13 @@ function dragged(d) {
 }
 
 // 缩放
-svg.call(d3.zoom().scaleExtent([0.05, 8]).on('zoom', () => {
-  // 保存当前缩放的属性值
-  chart.attr('transform', d3.event.transform);
-})).on('dblclick.zoom', null);
+svg.call(d3.zoom()
+    .scaleExtent([0.05, 8]) // 缩放范围
+    .on('zoom', () => {
+      // 保存当前缩放的属性值
+      chart.attr('transform', d3.event.transform);
+    }))
+  .on('dblclick.zoom', null); // 解除双击放大的事件
 
 function ticked() {
   //对于每一个时间间隔
