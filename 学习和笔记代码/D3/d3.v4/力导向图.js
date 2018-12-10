@@ -95,7 +95,7 @@ var width = 600,
   height = 600
 
 // 力数据转换
-let force = d3.forceSimulation(nodes)
+var force = d3.forceSimulation(nodes)
   .force("charge", d3.forceManyBody())
   .force('link', d3.forceLink(edges).distance(function (d) { //每一边的长度
     return d.value * 150;
@@ -106,36 +106,41 @@ let force = d3.forceSimulation(nodes)
 console.log(nodes, edges);
 
 
-let svg = d3.select('#container')
+var svg = d3.select('#container')
   .append('svg')
   .attr('width', width)
   .attr('height', height)
 
-let chart = svg.append('g')
+var chart = svg.append('g').attr('class', 'chart')
 
 // 添加边
-let g_edges = chart.selectAll('g.edges')
+var g_edges = chart.selectAll('g.edges')
   .data(edges)
   .enter()
   .append('g')
   .attr('class', 'edges')
 
 // 添加边
-let chart_edges = g_edges.append('line')
+var chart_edges = g_edges.append('line')
   .style("stroke", "steelblue")
   .style("stroke-width", 1)
   .attr('marker-end', 'url(#arrow)')
 
 var edge_texts = g_edges.append("text")
+  .append('textPath')
+  .attr('xlink:href', function (d, i) {
+    return '#text_' + i
+  })
+  .attr('startOffset', '50%')
   .text(function (d) {
     return d.relation;
   })
   .style("fill", "#eee")
 
-let color = d3.schemeCategory10
+var color = d3.schemeCategory10
 
 // 添加顶点分组，包含顶点和文字，在这里添加拖拽
-let g_nodes = chart.selectAll('g.nodes')
+var g_nodes = chart.selectAll('g.nodes')
   .data(nodes)
   .enter()
   .append('g')
@@ -149,14 +154,14 @@ let g_nodes = chart.selectAll('g.nodes')
     .on("end", dragended))
 
 // 添加顶点
-let chart_nodes = g_nodes.append("circle")
+var chart_nodes = g_nodes.append("circle")
   .attr("r", 20)
   .style("fill", function (d, i) {
     return color[i]
   })
 
 //添加描述节点的文字
-let node_texts = g_nodes.append("text")
+var node_texts = g_nodes.append("text")
   .text(function (d) {
     return d.name;
   })
@@ -164,8 +169,10 @@ let node_texts = g_nodes.append("text")
   .style('text-anchor', 'middle')
   .style('dominant-baseline', 'middle')
 
-// 定义箭头
+
 var defs = chart.append("defs")
+
+// 定义箭头
 //添加 marker 标签及其属性  
 var arrowMarker = defs.append("marker")
   .attr("id", "arrow") // 供后面使用的 id 标识
@@ -178,7 +185,19 @@ var arrowMarker = defs.append("marker")
   .attr("orient", "auto") // 箭头方向
   .append("path") //绘制直线箭头路径 
   .attr("d", "M2,2 L10,6 L2,10 L6,6 L2,2")
-  .style('fill','red') //箭头颜色
+  .style('fill', 'red') //箭头颜色
+
+var text_path = defs.selectAll('path.text_path')
+  .data(edges)
+  .enter()
+  .append('path')
+  .attr('id', function (d, i) {
+    return 'text_' + i
+  })
+  .attr('class', 'text_path')
+  .attr('d', function (d, i) {
+    return 'M' + d.source.x + ' ' + d.source.y + ' L' + d.target.x + ' ' + d.target.y
+  })
 
 // d.fx 和 d.fy 表示固定坐标
 // 拖拽开始的时候，让节点固定位置为当前节点位置
@@ -229,13 +248,18 @@ function ticked() {
     })
 
   // 更新边文字坐标
-  edge_texts
-    .attr("x", function (d) {
-      return (d.source.x + d.target.x) / 2;
-    })
-    .attr("y", function (d) {
-      return (d.source.y + d.target.y) / 2;
-    })
+  // edge_texts
+  //   .attr("x", function (d) {
+  //     return (d.source.x + d.target.x) / 2;
+  //   })
+  //   .attr("y", function (d) {
+  //     return (d.source.y + d.target.y) / 2;
+  //   })
+
+  text_path
+  .attr('d', function (d, i) {
+    return 'M' + d.source.x + ' ' + d.source.y + ' L' + d.target.x + ' ' + d.target.y
+  })
 
   //更新顶点分组坐标
   g_nodes
