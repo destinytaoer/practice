@@ -148,6 +148,14 @@
         .attr("fill", '#e3e3e3')
     }
 
+    // define arrow
+    this.edgeTypes.forEach(function (e) {
+      //M0,0 L10,5 L0,10 L2,5 z
+      // M10,0 L2,5 L10,10 L8,5 z
+      defineArrow(_this.chart, 'arrow_' + e, _this.options.r + 9, 'M10,0 L2,5 L10,10 L8,5 z', e)
+    })
+    defineArrow(this.chart, 'arrow', this.options.r + 9, 'M10,0 L2,5 L10,10 L8,5 z')
+
     /** 动态调整位置 */
     function tickActions() {
       // 移动 vertex 位置
@@ -257,6 +265,8 @@
         var y = parseFloat(thisText.attr('y'))
         var lineHeight = 20
         var i = 0
+
+        // 16 个字为一组进行换行
         while (name.slice(0, len).length === len) {
           textStack.push({
             name: name.slice(0, len),
@@ -270,6 +280,8 @@
           dx: 0,
           dy: (i++ * lineHeight) + y
         })
+
+        // 为 text 元素添加 tspan 元素，一行一个 tspan
         textStack.forEach(function (v) {
           thisText.append('tspan').text(v.name).attr('y', v.dy)
             .attr('x', v.dx)
@@ -290,13 +302,6 @@
     }
 
     var _this = this
-    // define arrow
-    this.edgeTypes.forEach(function (e) {
-      //M0,0 L10,5 L0,10 L2,5 z
-      // M10,0 L2,5 L10,10 L8,5 z
-      defineArrow(_this.chart, 'arrow_' + e, _this.options.r + 9, 'M10,0 L2,5 L10,10 L8,5 z', e)
-    })
-    defineArrow(this.chart, 'arrow', this.options.r + 9, 'M10,0 L2,5 L10,10 L8,5 z')
 
     // setup
     var linkForce = d3.forceLink(this.edges)
@@ -429,6 +434,7 @@
           return 'stroke: ' + d3GraphUtil.graphColorConfig[d._id.split('/')[0]] || ''
         }
       })
+
     // 增加反向路径, 用于旋转 label
     this.chart.select('defs').selectAll('.reverse-path')
       .data(this.edges)

@@ -96,7 +96,7 @@ var width = 600,
 
 // 力数据转换
 var force = d3.forceSimulation(nodes)
-  .force("charge", d3.forceManyBody())
+  .force("charge", d3.forceManyBody().strength(-200))
   .force('link', d3.forceLink(edges).distance(function (d) { //每一边的长度
     return d.value * 150;
   }).strength(1))
