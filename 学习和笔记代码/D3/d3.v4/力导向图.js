@@ -187,7 +187,8 @@ var arrowMarker = defs.append("marker")
   .attr("d", "M2,2 L10,6 L2,10 L6,6 L2,2")
   .style('fill', 'red') //箭头颜色
 
-var text_path = defs.selectAll('path.text_path')
+// 定义文字正向路径
+defs.selectAll('path.text_path')
   .data(edges)
   .enter()
   .append('path')
@@ -198,6 +199,20 @@ var text_path = defs.selectAll('path.text_path')
   .attr('d', function (d, i) {
     return 'M' + d.source.x + ' ' + d.source.y + ' L' + d.target.x + ' ' + d.target.y
   })
+
+// 定义反向路径
+defs.selectAll('path.text_path_reverse')
+  .data(edges)
+  .enter()
+  .append('path')
+  .attr('id', function (d, i) {
+    return 'text_' + i + '_reverse'
+  })
+  .attr('class', 'text_path_reverse')
+  .attr('d', function (d, i) {
+    return 'M' + d.target.x + ' ' + d.target.y + ' L' + d.source.x + ' ' + d.source.y
+  })
+
 
 // d.fx 和 d.fy 表示固定坐标
 // 拖拽开始的时候，让节点固定位置为当前节点位置
@@ -259,9 +274,25 @@ function ticked() {
   //     return (d.source.y + d.target.y) / 2;
   //   })
 
-  text_path
+  // 当源和目标位置被移动到交换相对（左右）位置时，将文字换到另一边。更改文字路径
+  edge_texts.each(function (d, i, g) {
+    // 通过旋转 label, 使文字始终处于 edge 上方
+    if (d.source.x > d.target.x) {
+      d3.select(g[i]).attr('xlink:href', '#text_' + i + '_reverse')
+    } else {
+      d3.select(g[i]).attr('xlink:href', '#text_' + i)
+    }
+  })
+
+
+  d3.selectAll('.text_path')
   .attr('d', function (d, i) {
     return 'M' + d.source.x + ' ' + d.source.y + ' L' + d.target.x + ' ' + d.target.y
+  })
+
+  d3.selectAll('.text_path_reverse')
+  .attr('d', function (d, i) {
+    return 'M' + d.target.x + ' ' + d.target.y + ' L' + d.source.x + ' ' + d.source.y 
   })
 
   //更新顶点分组坐标
