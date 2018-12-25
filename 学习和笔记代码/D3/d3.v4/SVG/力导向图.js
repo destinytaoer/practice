@@ -103,9 +103,6 @@ var force = d3.forceSimulation(nodes)
   .force("center", d3.forceCenter(width / 2, height / 2))
   .on('tick', ticked)
 
-console.log(nodes, edges);
-
-
 var svg = d3.select('#container')
   .append('svg')
   .attr('width', width)
@@ -132,6 +129,7 @@ var edge_texts = g_edges.append("text")
     return '#text_' + i
   })
   .attr('startOffset', '50%')
+  .attr('text-anchor', 'middle')
   .text(function (d) {
     return d.relation;
   })
