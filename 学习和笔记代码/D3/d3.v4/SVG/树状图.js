@@ -129,14 +129,14 @@ treeGraph.prototype.preprocessData = function () {
   // depth: 0 // 节点深度，根节点为 0
   // height: 3 // 节点的高度，叶子节点为 0
   // parent: null // 节点的父节点，根节点为 null
-  var treegenerator = d3.tree()
+  var treeGenerator = d3.tree()
     .size([this.width-100, this.height-100]) // 树布局的尺寸
     // .nodeSize([1,1]) // 节点的尺寸
     .separation(function (a, b) {
       return a.parent == b.parent ? 1 : 2
     }) // 间隔访问器用来设置相邻的两个节点之间的间隔。指定的间隔访问器会传递两个节点 a 和 b，并且必须返回一个期望的间隔值。
   
-  treegenerator(this.treeData)
+  treeGenerator(this.treeData)
   // 增加坐标值
   // x: 0.5
   // y: 0
@@ -163,7 +163,7 @@ treeGraph.prototype.renderGraph = function () {
     .attr("fill", "none")
     .attr("stroke", "#555")
     .attr("stroke-opacity", 0.4)
-    .attr("stroke-width", 1.5)
+    // .attr("stroke-width", 1.5)
   
   // 画节点
   d3.select('.nodes')
