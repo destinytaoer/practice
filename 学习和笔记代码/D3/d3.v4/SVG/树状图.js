@@ -95,6 +95,7 @@ var _default = {
 }
 
 function treeGraph(data, options) {
+  options = options || _default
   this.treeData = data;
   this.width = options.width;
   this.height = options.height;
@@ -189,8 +190,12 @@ treeGraph.prototype.renderGraph = function () {
     .attr("fill", "white")
 }
 
-var tree = new treeGraph(treeData, _default)
-
-tree.initLayout()
+treeGraph.prototype.init = function () {
+  this.initLayout()
   .preprocessData()
   .renderGraph()
+}
+
+var tree = new treeGraph(treeData, _default)
+
+tree.init()
