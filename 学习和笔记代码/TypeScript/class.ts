@@ -60,7 +60,7 @@ var man5 = new Man5('bb')
 // man5.name // 报错
 
 /**
- * public 在外部不能访问，在其派生类中可以访问
+ * protected 在外部不能访问，在其派生类中可以访问
  */
 class Person4 {
   protected name: string;
