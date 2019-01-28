@@ -71,7 +71,7 @@ var Man5 = /** @class */ (function (_super) {
 var man5 = new Man5('bb');
 // man5.name // 报错
 /**
- * public 在外部不能访问，在其派生类中可以访问
+ * protected 在外部不能访问，在其派生类中可以访问
  */
 var Person4 = /** @class */ (function () {
     function Person4(name) {

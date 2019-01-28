@@ -10,12 +10,12 @@ var square: SquareConfig = { color: 'red', width: 111 }
 /**
  * 可选属性
  */
-interface Square {
+interface Square1 {
   color: string;
   area?: number;
 }
 
-function createSquare(config: SquareConfig): Square {
+function createSquare(config: SquareConfig): Square1 {
   let newSquare = {color: "white", area: 100};
   newSquare.color = config.color
   return newSquare;
@@ -101,3 +101,21 @@ interface dictionary {
   length: number;
   // name: string; // 报错  
 }
+
+interface Tree<T> {
+  value: T;
+  left: Tree<T>;
+  right: Tree<T>;
+}
+// type Tree<T> = {
+//   value: T;
+//   left: Tree<T>;
+//   right: Tree<T>;
+// }
+
+type aa = {
+  name: aa
+}
+type Yikes =  {
+  aa: Yikes[]
+}; // erro
